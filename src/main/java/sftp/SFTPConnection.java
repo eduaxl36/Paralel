@@ -116,8 +116,8 @@ public class SFTPConnection extends FTPService {
     
      
     public void rename() throws SftpException, JSchException, InterruptedException {
-              String sourcePath = "/IMI/GerenciadorCambios/Panama/def/dkl/flag/true";
-                String destinationPath = "/IMI/GerenciadorCambios/Panama/def/dkl/flag/true".replace("true", "false");
+              String sourcePath = "/IMI/GerenciadorCambios/Panama/def/dkl/flag/true.txt";
+                String destinationPath = "/IMI/GerenciadorCambios/Panama/def/dkl/flag/true.txt".replace("true", "false");
             
         this.Canal.rename(sourcePath, destinationPath);
 
@@ -137,8 +137,6 @@ public class SFTPConnection extends FTPService {
             fileName = entry.getFilename();
             
             if (fileName.contains("true")) {
-                // Renomear o arquivo de "true" para "false"
-  
                 return "tem";
             }
         }

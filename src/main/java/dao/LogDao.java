@@ -5,6 +5,7 @@
 package dao;
 
 import Entities.Log;
+import Util.Util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,7 +15,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -24,7 +26,10 @@ public class LogDao {
 
     private LocalDate DataProducao;
     private File LogFile;
-
+    private JTable Tabela;
+    private DefaultTableModel Modelo;
+    
+    
     public LogDao() {
 
     }
@@ -34,6 +39,73 @@ public class LogDao {
         this.LogFile = DarkListFile;
     }
 
+    public LogDao(LocalDate DataProducao, File LogFile, JTable Tabela) {
+        this.DataProducao = DataProducao;
+        this.LogFile = LogFile;
+        this.Tabela = Tabela;
+        Modelo = (DefaultTableModel) Tabela.getModel();
+    }
+    
+    
+    public void downloadArquivoLog(){
+    
+    
+    
+    
+    
+    
+    
+    }
+    
+    
+       
+    public void preencherTabela() throws Exception{
+
+        
+        Logs().forEach(x -> {
+
+            if (!(x.getAlteracaoRealizada().contains("a"))) {
+
+                Modelo.addRow(new Object[]{
+                    x.getId(),
+                    x.getDataAbertura(),
+                    x.getDataFechamento(),
+                    x.getComentario(),
+                    x.isStatus(),
+                    "-",
+                    "-",
+                    x.getDiferencaDatas(),
+                    "-"
+
+                });
+
+            } else {
+
+                Modelo.addRow(new Object[]{
+                    x.getId(),
+                    x.getDataAbertura(),
+                    x.getDataFechamento(),
+                    x.getComentario(),
+                    x.isStatus(),
+                    x.getDescStatus(),
+                    x.getAutorAlteracao(),
+                    x.getDiferencaDatas(),
+                    x.getAlteracaoRealizada()
+
+                });
+
+            }
+
+        });
+
+        new Util(Tabela).ajustarFormataColunasTabelaConteudo();
+    
+    
+    }
+    
+    
+    
+ 
     public List<Log> Logs() throws Exception {
 
         List<Log> Darks = new ArrayList<>();
@@ -66,7 +138,7 @@ public class LogDao {
                 String Abertura = RawLines[1].trim();
                 String Fechamento = RawLines[2].trim().replaceAll("(^\\-1$)", "20501231");
                 String Observacao = RawLines[3].trim();
-                boolean enDark = Boolean.valueOf(RawLines[4].trim());
+                boolean enDark = Boolean.parseBoolean(RawLines[4].trim());
                 String tipoCambio = RawLines[5].trim();
                 String LogAutor = RawLines[6].trim();
                 int dif = 0;
@@ -78,9 +150,6 @@ public class LogDao {
 
                 String AcaoCapturada = RawLines[8].trim();
 
-                
-           
-                
                 
                 return new Log(
                         Domicilio,

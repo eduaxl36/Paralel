@@ -4,7 +4,7 @@
  */
 package viewClient;
 
-import View.*;
+import Util.Util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,12 +21,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.apache.commons.lang.time.DateUtils;
-import static viewClient.DarklistManagerViewClient.SortNumber;
-import static viewClient.DarklistManagerViewClient.autoResizeColumns;
 import static viewClient.DarklistManagerViewClient.filterTable;
 import static viewClient.DarklistManagerViewClient.lblDtProd;
 import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
 import static viewClient.DarklistManagerViewClient.txt_filtro;
+import static viewClient.DarklistManagerViewClient.NumeroOriginalSelecionadoTabela;
 
 /**
  *
@@ -34,49 +33,35 @@ import static viewClient.DarklistManagerViewClient.txt_filtro;
  */
 public class CloseMode extends javax.swing.JFrame {
 
-    UtilTable ut;
-     static String  oldValueComment;
+    static String oldValueComment;
+    public static boolean instanciaMudancaAdicao = false;
 
-    
+    public static boolean identificarAlteracaoNoComentario(String NovoValor) {
 
-    public static boolean identificarAlteracaoNoComentario(String NovoValor){
-    
-      
-    
         return oldValueComment.equals(NovoValor);
-    
-   
+
     }
-    
-    
-    
+
     public static String definidorDeAcoes(boolean tipo) {
 
         boolean identificarAlteracaoNoComentario = identificarAlteracaoNoComentario(txt_Comment.getText());
-        String val="";
-        
+        String val = "";
+
         if (tipo == false) {
 
             val = "Hogar en Produccion";
 
+        } else {
+
+            val = "Cambio en fecha";
+
         }
-        else{
-        
-             val = "Cambio en fecha";
-        
-        
+
+        if (identificarAlteracaoNoComentario == false) {
+
+            val += "/Cambio en Descritivo";
+
         }
-        
-        
-        if(identificarAlteracaoNoComentario==false){
-        
-        val+="/Cambio en Descritivo";
-        
-        }
-        
-        
-        
-        
 
         return val;
 
@@ -94,7 +79,7 @@ public class CloseMode extends javax.swing.JFrame {
      */
     public CloseMode() {
         initComponents();
-        
+
         ImageIcon img = new ImageIcon(getClass().getResource("/img/chave2.png"));
 
         this.setIconImage(img.getImage());
@@ -136,8 +121,13 @@ public class CloseMode extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         PnMain.setBackground(new java.awt.Color(255, 255, 255));
         PnMain.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -212,6 +202,7 @@ public class CloseMode extends javax.swing.JFrame {
                 (datechooser.view.BackRenderer)null,
                 false,
                 true)));
+    dateChooserCombo.setLocale(new java.util.Locale("pt", "BR", ""));
     PnMain.add(dateChooserCombo, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 70, 210, 30));
 
     jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/datafinal.png"))); // NOI18N
@@ -251,8 +242,6 @@ public class CloseMode extends javax.swing.JFrame {
     }
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-       
-        
         int resposta = JOptionPane.showConfirmDialog(null, "Desea realmente cambiar la fecha de cerramiento?",
                 "Confirmacion",
                 JOptionPane.YES_OPTION);
@@ -262,10 +251,10 @@ public class CloseMode extends javax.swing.JFrame {
             try {
                 if (fecharLinha()) {
 
-                    this.setVisible(false);
+                    this.dispose();
                     txt_filtro.setText("");
-                    autoResizeColumns();
-                         filterTable();     
+                    new Util(tbMainViewDarkList).ajustarFormataColunasTabelaConteudo();
+                    filterTable();
 
                 }
 
@@ -282,6 +271,14 @@ public class CloseMode extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+
+
+        instanciaMudancaAdicao=false;
+
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formWindowClosed
+
     public static String tratarComentario(String Comment) {
 
         String ValTemp = Comment.replaceAll("\"", "");
@@ -294,47 +291,43 @@ public class CloseMode extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static boolean fecharLinha() throws ParseException {
-    txt_filtro.setText("");
-    
+        txt_filtro.setText("");
 
-    LocalDate dataInicio = LocalDate.parse(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 1).toString());
-    Date RawProductionDate = new SimpleDateFormat("yyyyMMdd").parse(lblDtProd.getText());
-    LocalDate ProducionDate = RawProductionDate.toInstant()
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate();
+        LocalDate dataInicio = LocalDate.parse(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 1).toString());
+        Date RawProductionDate = new SimpleDateFormat("yyyyMMdd").parse(lblDtProd.getText());
+        LocalDate ProducionDate = RawProductionDate.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
 
-    String username = System.getProperty("user.name");
+        String username = System.getProperty("user.name");
 
-    LocalDate dataf = DateUtils.toCalendar(dateChooserCombo.getSelectedDate().getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate dataf = DateUtils.toCalendar(dateChooserCombo.getSelectedDate().getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-    boolean MaiorOUMaiorAbertura = ProducionDate.isEqual(dataInicio) || ProducionDate.isAfter(dataInicio);
-    boolean MenorQueFechamentoOUIGUAL = ProducionDate.isEqual(dataf) || ProducionDate.isBefore(dataf);
+        boolean MaiorOUMaiorAbertura = ProducionDate.isEqual(dataInicio) || ProducionDate.isAfter(dataInicio);
+        boolean MenorQueFechamentoOUIGUAL = ProducionDate.isEqual(dataf) || ProducionDate.isBefore(dataf);
 
-    boolean validator = (MaiorOUMaiorAbertura && MenorQueFechamentoOUIGUAL);
+        boolean validator = (MaiorOUMaiorAbertura && MenorQueFechamentoOUIGUAL);
 
-    String status = definidorDeAcoes(validator);
+        String status = definidorDeAcoes(validator);
 
-    DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
+        DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
 
-    if (!verificarFechamentoInferiorAbertura()) {
-        df.setValueAt(dataf.toString(), SortNumber, 2);
-        df.setValueAt(validator, SortNumber, 4);
-        df.setValueAt("En Aprobacion", SortNumber, 5);
-        df.setValueAt(username, SortNumber, 6);
-        df.setValueAt(tratarComentario(txt_Comment.getText()), SortNumber, 3);
-        df.setValueAt(calcularDiferencaEmMinutos(ProducionDate, dataf), SortNumber, 7);
-        df.setValueAt(status, SortNumber, 8);
+        if (!verificarFechamentoInferiorAbertura()) {
+            df.setValueAt(dataf.toString(), NumeroOriginalSelecionadoTabela, 2);
+            df.setValueAt(validator, NumeroOriginalSelecionadoTabela, 4);
+            df.setValueAt("En Aprobacion", NumeroOriginalSelecionadoTabela, 5);
+            df.setValueAt(username, NumeroOriginalSelecionadoTabela, 6);
+            df.setValueAt(tratarComentario(txt_Comment.getText()), NumeroOriginalSelecionadoTabela, 3);
+            df.setValueAt(calcularDiferencaEmMinutos(ProducionDate, dataf), NumeroOriginalSelecionadoTabela, 7);
+            df.setValueAt(status, NumeroOriginalSelecionadoTabela, 8);
 
+            return true;
+        } else {
+            JOptionPane.showMessageDialog(null, "No se puede cerrar con una fecha inferior al del inicio!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
 
-
-        return true;
-    } else {
-        JOptionPane.showMessageDialog(null, "No se puede cerrar con una fecha inferior al del inicio!", "Error", JOptionPane.ERROR_MESSAGE);
+        return false;
     }
-
-    return false;
-}
-
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */

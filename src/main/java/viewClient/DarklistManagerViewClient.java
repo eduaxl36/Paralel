@@ -4,54 +4,36 @@
  */
 package viewClient;
 
-import static View.ViewDarkAdd.removeTableLine;
+import flag.CambioFlagView;
+import Util.MainTableUtil;
+import Util.Util;
+import br.com.kantar.pathManager.Manager;
+import br.com.kantar.sftp.FlagOperations;
+import static br.com.kantar.sftp.FlagOperations.Flags;
+import br.com.kantar.sftp.SFTPOperations;
 import com.formdev.flatlaf.FlatLightLaf;
 import dao.DarklistDao1;
 import dao.LogDao;
-import flag.entidadeFlag;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.time.LocalDate;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.*;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
-import javax.swing.JTable;
-import javax.swing.RowFilter;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 import org.apache.commons.io.FileUtils;
-import sftp.ConnectionFactory;
-import static sftp.ConnectionFactory.downloadLogdia;
-import static sftp.ConnectionFactory.uploadLogdia;
-import static viewClient.FlagCreator.createFlag;
+import sftp.ConfiguracoesSFTPModel;
+import sftp.RemoteOperations;
+import static viewClient.CloseMode.instanciaMudancaAdicao;
 import static viewClient.MenuFile.SelectedFile;
+import static viewClient.ViewDarkAdd.instanciaAbertaAdicao;
 
 /**
  *
@@ -59,151 +41,53 @@ import static viewClient.MenuFile.SelectedFile;
  */
 public class DarklistManagerViewClient extends javax.swing.JFrame {
 
-    public static int DefinitionNumber;
-    public static int SortNumber;
-    public static int SelectedRowReal = 0;
-
-    public static int defineNumber(int numero) {
-
-        DefinitionNumber = numero;
-        return numero;
-
-    }
-
-    public static TableRowSorter<DefaultTableModel> sorter;
-    static JMenuItem menuItem3;
-    JPopupMenu popupMenu;
+    
+    private  int Incremental;
+    private  int FinalNumber;
+    
     static boolean validador = true;
     static boolean validador2 = true;
     static boolean validador3 = false;
+    
+    static int NumeroOriginalSelecionadoTabela;
 
-    public static List<entidadeFlag> Flags = new ArrayList<>();
+    private final ActionListener AbrirAdicao = (ActionEvent e) -> instanciaAdicaoChecker();
+    private final ActionListener AbrirCloseMode = (ActionEvent e) -> instanciaMudancaChecker();
 
-    public static List<entidadeFlag> criarFlag() throws IOException {
+    private final MainTableUtil UtilMainTable;
 
-        for (int i = 0; i < tbMainViewDarkList.getRowCount(); i++) {
-            int dom = Integer.parseInt(tbMainViewDarkList.getValueAt(i, 0).toString());
-            String value = String.valueOf(tbMainViewDarkList.getValueAt(i, 6));
-            String comment = String.valueOf(tbMainViewDarkList.getValueAt(i, 3));
-            String result = value != null && !value.isEmpty() ? value : "-";
-            String valueTp = String.valueOf(tbMainViewDarkList.getValueAt(i, 8));
-            String resultTp = valueTp != null && !valueTp.isEmpty() ? valueTp : "-";
+    public static final String PATH_LOG_DIARIO = Manager.getRoot().get("caminho_local_temp_producao_dia");
 
-            LocalDate DataAbertura = LocalDate.parse(tbMainViewDarkList.getValueAt(i, 1).toString());
-            LocalDate DataFechamento = LocalDate.parse(tbMainViewDarkList.getValueAt(i, 2).toString());
-
-            if (!(result.equals("null"))) {
-
-                Flags.add(
-                        new entidadeFlag(
-                                dom,
-                                result,
-                                resultTp,
-                                DataAbertura,
-                                DataFechamento,
-                                false,
-                                comment)
-                );
-
-            }
-
+    private static RemoteOperations Remote;
+    
+     public void instanciaAdicaoChecker(){
+    
+    
+        if (!instanciaAbertaAdicao) {
+            instanciaAbertaAdicao = true;
+            new ViewDarkAdd().setVisible(true);
+        } else {
+//            JOptionPane.showMessageDialog(null, "A instância já está aberta.");
         }
-
-           createFlag(Flags) ;
-        return Flags;
+    
+    
     }
-
-    public static int getFreezeTable(long Dom, LocalDate DataAbertura) throws IOException {
-
-        lblDtProd.setText(FileUtils.readFileToString(new File("C:\\teste\\Nova pasta\\logDia.txt")));
-
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd");
-
-        new DarklistDao1(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), SelectedFile).getStatus().forEach((var x) -> {
-
-            if (x != null && x.getId() != 0) {
-
-                if (x.getId() == Dom && DataAbertura.isEqual(x.getDataAbertura())) {
-                    SortNumber = DefinitionNumber;
-                }
-
-            }
-
-            DefinitionNumber++;
-        });
-        return SortNumber;
-
-    }
-
-    public static void autoResizeColumns() {
-        for (int column = 0; column < tbMainViewDarkList.getColumnCount(); column++) {
-            TableColumn tableColumn = tbMainViewDarkList.getColumnModel().getColumn(column);
-            int preferredWidth = tableColumn.getMinWidth();
-            int maxWidth = tableColumn.getMaxWidth();
-
-            for (int row = 0; row < tbMainViewDarkList.getRowCount(); row++) {
-                TableCellRenderer cellRenderer = tbMainViewDarkList.getCellRenderer(row, column);
-                Component c = tbMainViewDarkList.prepareRenderer(cellRenderer, row, column);
-                int width = c.getPreferredSize().width + tbMainViewDarkList.getIntercellSpacing().width;
-                preferredWidth = Math.max(preferredWidth, width);
-
-                // Verificar se o tamanho excede o máximo permitido
-                if (preferredWidth >= maxWidth) {
-                    preferredWidth = maxWidth;
-                    break;
-                }
-            }
-
-            tableColumn.setPreferredWidth(preferredWidth);
-            tbMainViewDarkList.getColumnModel().getColumn(0).setCellRenderer(new CentralizedCellRenderer());
-            tbMainViewDarkList.getColumnModel().getColumn(1).setCellRenderer(new CentralizedCellRenderer());
-            tbMainViewDarkList.getColumnModel().getColumn(2).setCellRenderer(new CentralizedCellRenderer());
-            tbMainViewDarkList.getColumnModel().getColumn(3).setCellRenderer(new CentralizedCellRenderer());
-            tbMainViewDarkList.getColumnModel().getColumn(4).setCellRenderer(new CentralizedCellRenderer());
-            tbMainViewDarkList.getColumnModel().getColumn(5).setCellRenderer(new CentralizedCellRenderer());
-            tbMainViewDarkList.getColumnModel().getColumn(6).setCellRenderer(new CentralizedCellRenderer());
-            tbMainViewDarkList.getColumnModel().getColumn(7).setCellRenderer(new CentralizedCellRenderer());
-            tbMainViewDarkList.getColumnModel().getColumn(8).setCellRenderer(new CentralizedCellRenderer());
-
-            UIManager.put("Table.background", new Color(240, 240, 240));
-            UIManager.put("Table.selectionBackground", new Color(0, 120, 215));
-            UIManager.put("Table.selectionForeground", Color.WHITE);
+    
+    public void instanciaMudancaChecker(){
+    
+    
+        if (!instanciaMudancaAdicao) {
+            instanciaMudancaAdicao = true;
+            new CloseMode().setVisible(true);
+        } else {
+//            JOptionPane.showMessageDialog(null, "A instância já está aberta.");
         }
+    
+    
     }
-
-    public static void exportToCSV(JTable table, String filePath) {
-        try (FileWriter writer = new FileWriter(filePath)) {
-            TableModel model = table.getModel();
-            int rowCount = model.getRowCount();
-            int columnCount = model.getColumnCount();
-
-            // Escrever os nomes das colunas
-            for (int column = 0; column < columnCount; column++) {
-                writer.append(model.getColumnName(column));
-                if (column < columnCount - 1) {
-                    writer.append(";");
-                }
-            }
-            writer.append("\n");
-
-            // Escrever os dados das células
-            for (int row = 0; row < rowCount; row++) {
-                for (int column = 0; column < columnCount; column++) {
-                    writer.append(String.valueOf(model.getValueAt(row, column)));
-                    if (column < columnCount - 1) {
-                        writer.append(";");
-                    }
-                }
-                writer.append("\n");
-            }
-
-            System.out.println("JTable exportado para CSV com sucesso!");
-        } catch (IOException e) {
-            System.out.println("Erro ao exportar JTable para CSV: " + e.getMessage());
-        }
-    }
-
-    public static boolean validarSeProucaoJaFoi(long Domicilio) {
+   
+    public  static boolean validarSeProucaoJaFoi(long Domicilio) {
+        
 
         for (int i = 0; i < tbMainViewDarkList.getRowCount(); i++) {
 
@@ -223,142 +107,11 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
 
     }
 
-    private void showPopupMenu(Component component, int x, int y) {
-
-        popupMenu = new JPopupMenu();
-
-        JMenuItem menuItem1 = new JMenuItem("Añadir hogar en Darklist");
-
-        JMenuItem menuItem4 = null;
-
-        ImageIcon icon = new ImageIcon(getClass().getResource("/img/darklist.png"));
-        ImageIcon icon2 = new ImageIcon(getClass().getResource("/img/allow.png"));
-        ImageIcon icon3 = new ImageIcon(getClass().getResource("/img/delete.png"));
-        ImageIcon icon4 = new ImageIcon(getClass().getResource("/img/allow.png"));
-        menuItem1.setIcon(icon);
-
-        popupMenu.add(menuItem1);
-
-        popupMenu.addSeparator();
-
-        JMenuItem menuItem2 = new JMenuItem("Cambiar");
-        menuItem2.setIcon(icon2);
-        popupMenu.add(menuItem2);
-        popupMenu.addSeparator();
-        menuItem3 = new JMenuItem("Borrar Linea");
-        popupMenu.add(menuItem3);
-        menuItem3.setIcon(icon3);
-
-        popupMenu.addSeparator();
-        menuItem4 = new JMenuItem("Aprovar Cambio");
-        popupMenu.add(menuItem4);
-        menuItem4.setIcon(icon4);
-
-        menuItem4.setEnabled(validador3);
-
-        menuItem3.setEnabled(validador);
-        menuItem2.setEnabled(validador2);
-
-        menuItem2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                new CloseMode().setVisible(true);
-
-            }
-        });
-
-        menuItem1.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                new ViewDarkAdd().setVisible(true);
-
-            }
-        });
-
-        menuItem3.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                removeTableLine();
-
-            }
-        });
-
-        menuItem4.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                tbMainViewDarkList.setValueAt("Cambio Aprovado", tbMainViewDarkList.getSelectedRow(), 5);
-
-            }
-        });
-
-        popupMenu.show(component, x, y);
-    }
-
-    public void testes() {
-        tbMainViewDarkList.getTableHeader().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int columnIndex = tbMainViewDarkList.columnAtPoint(e.getPoint());
-
-                sorter.setSortKeys(List.of(new RowSorter.SortKey(columnIndex, SortOrder.ASCENDING)));
-            }
-        });
-        tbMainViewDarkList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                if (SwingUtilities.isRightMouseButton(e)) {
-
-                    String Verificador = tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 5).toString();
-
-              
-                    
-                    if (Verificador.toLowerCase().matches(".*apro.*")) {
-
-                        validador3 = true;
-
-                    } else {
-
-                        validador3 = false;
-
-                    }
-
-                    if (Verificador.equals("No permitido cambios")) {
-
-                        validador2 = false;
-
-                    } else {
-
-                        validador2 = true;
-
-                    }
-
-                    if (Verificador.contains("Nueva Linea/Aprobacion")) {
-
-                        validador = true;
-
-                    } else {
-
-                        validador = false;
-
-                    }
-
-                    showPopupMenu(e.getComponent(), e.getX(), e.getY());
-
-                }
-            }
-        });
-
-    }
-
-    public static void loadLog() throws IOException, Exception {
+    public  static void carregarLogAlteracoes() throws IOException, Exception {
 
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd");
-
-        ConnectionFactory.downloadLoglistFile(SelectedFile.getName());
+        
+        Remote.downloadArquivoLista(SelectedFile.getName());
 
         new LogDao(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), SelectedFile).Logs().forEach(x -> {
 
@@ -398,30 +151,15 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
 
         });
 
-        tbMainViewDarkList.getColumnModel().getColumn(1).setCellRenderer(new CentralizedCellRenderer());
-        tbMainViewDarkList.getColumnModel().getColumn(2).setCellRenderer(new CentralizedCellRenderer());
-        tbMainViewDarkList.getColumnModel().getColumn(3).setCellRenderer(new CentralizedCellRenderer());
-        tbMainViewDarkList.getColumnModel().getColumn(4).setCellRenderer(new CentralizedCellRenderer());
-        tbMainViewDarkList.getColumnModel().getColumn(5).setCellRenderer(new CentralizedCellRenderer());
-        tbMainViewDarkList.getColumnModel().getColumn(6).setCellRenderer(new CentralizedCellRenderer());
-        tbMainViewDarkList.getColumnModel().getColumn(7).setCellRenderer(new CentralizedCellRenderer());
-        tbMainViewDarkList.getColumnModel().getColumn(8).setCellRenderer(new CentralizedCellRenderer());
-
-        UIManager.put("Table.background", new Color(240, 240, 240));
-        UIManager.put("Table.selectionBackground", new Color(0, 120, 215));
-        UIManager.put("Table.selectionForeground", Color.WHITE);
-
-        autoResizeColumns();
+        new Util(tbMainViewDarkList).ajustarFormataColunasTabelaConteudo();
 
     }
 
-    public static void loadDarkList() throws IOException, Exception {
-
-        lblDtProd.setText(FileUtils.readFileToString(new File("C:\\teste\\Nova pasta\\logDia.txt")));
+    public static void CarregarDarkList(File DarkFile) throws IOException, Exception {
 
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd");
-
-        new DarklistDao1(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), SelectedFile).getStatus().forEach((var x) -> {
+                
+        new DarklistDao1(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), DarkFile).getStatus().forEach((var x) -> {
 
             DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
 
@@ -449,24 +187,15 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
 
         });
 
-        tbMainViewDarkList.getColumnModel().getColumn(1).setCellRenderer(new CentralizedCellRenderer());
-        tbMainViewDarkList.getColumnModel().getColumn(2).setCellRenderer(new CentralizedCellRenderer());
-        tbMainViewDarkList.getColumnModel().getColumn(3).setCellRenderer(new CentralizedCellRenderer());
-        tbMainViewDarkList.getColumnModel().getColumn(4).setCellRenderer(new CentralizedCellRenderer());
-        tbMainViewDarkList.getColumnModel().getColumn(5).setCellRenderer(new CentralizedCellRenderer());
-        tbMainViewDarkList.getColumnModel().getColumn(6).setCellRenderer(new CentralizedCellRenderer());
-        tbMainViewDarkList.getColumnModel().getColumn(7).setCellRenderer(new CentralizedCellRenderer());
-        tbMainViewDarkList.getColumnModel().getColumn(8).setCellRenderer(new CentralizedCellRenderer());
-
-        UIManager.put("Table.background", new Color(240, 240, 240));
-        UIManager.put("Table.selectionBackground", new Color(0, 120, 215));
-        UIManager.put("Table.selectionForeground", Color.WHITE);
-
-        autoResizeColumns();
+        new Util(tbMainViewDarkList).ajustarFormataColunasTabelaConteudo();
 
     }
 
     public DarklistManagerViewClient() throws IOException, Exception {
+
+        Remote = new RemoteOperations(new ConfiguracoesSFTPModel("LATAM", 0, "regional.latam", "gDItMm7K", "sftp.kantaribopemedia.com", 22));
+      
+        UtilMainTable = new MainTableUtil();
 
         Flags.clear();
 
@@ -474,11 +203,12 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
 
         initComponents();
 
-        testes();
+        anularEnterDentroFiltro();
 
-        downloadLogdia();
-
-        lblDtProd.setText(FileUtils.readFileToString(new File("C:\\teste\\Nova pasta\\logDia.txt")));
+        Remote.downloadNumeralDia();
+        
+        lblDtProd.setText(FileUtils.readFileToString(new File(PATH_LOG_DIARIO)));
+        
 
     }
 
@@ -696,13 +426,13 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
 
             JFrame progressFrame = new JFrame() {
                 {
-                    // Configurações do JFrame
+                    // Configura��es do JFrame
                     setTitle("Aguardando processo");
                     setSize(300, 100);
                     setUndecorated(true);
                     setLocationRelativeTo(null);
 
-                    // Criação do JProgressBar
+                    // Cria��o do JProgressBar
                     JProgressBar progressBar = new JProgressBar();
                     progressBar.setIndeterminate(true); // Configura o modo indeterminado
 
@@ -725,12 +455,16 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
 
                         progressFrame.setVisible(true);
 
-                        String arquivoSalvoLog = "C:\\teste\\Nova pasta\\" + lblDtProd.getText() + "_log.csv";
+                        String arquivoSalvoLog = Manager.getRoot().get("caminho_local_temp_logFile") + lblDtProd.getText() + "_log.csv";
 
-                        exportToCSV(tbMainViewDarkList, arquivoSalvoLog);
+                        JOptionPane.showMessageDialog(null, arquivoSalvoLog);
+                        
+                        
+                        new Util(tbMainViewDarkList).exportarConteudoParaCsv(tbMainViewDarkList, arquivoSalvoLog);
+                       
 
-                        uploadLogdia(lblDtProd.getText());
-                      
+                        new SFTPOperations().uploadLogFile(lblDtProd.getText());
+
 
                         progressFrame.setVisible(false);
                     } catch (Exception ex) {
@@ -741,28 +475,40 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
 
             }.start();
 
-            // Coloque aqui o código que deseja executar quando a opção for "Sim"
-            // Coloque aqui o código que deseja executar quando a opção for "Sim"
         } else if (resposta == JOptionPane.NO_OPTION) {
-            // Caso a opção selecionada seja "Não"
-            JOptionPane.showMessageDialog(null, "Você selecionou 'Não'.");
+
+            JOptionPane.showMessageDialog(null, "Voc� selecionou 'N�o'.");
 
         }
 
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    public void anularEnterDentroFiltro() {
+
+        txt_filtro.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    e.consume();
+
+                }
+            }
+        });
+
+    }
+
+
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
         JFrame progressFrame = new JFrame() {
             {
-                // Configurações do JFrame
+
                 setTitle("Aguardando processo");
                 setSize(300, 100);
                 setUndecorated(true);
                 setLocationRelativeTo(null);
 
-                // Criação do JProgressBar
                 JProgressBar progressBar = new JProgressBar();
                 progressBar.setIndeterminate(true); // Configura o modo indeterminado
 
@@ -795,36 +541,28 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
 
             }.start();
 
-            // TODO add your handling code here:
         } catch (Exception ex) {
             Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        // TODO add your handling code here:
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
 
         try {
-            criarFlag();
-        } catch (IOException ex) {
+
+            new FlagOperations().obterListaDeFlags(lblDtProd.getText());
+            new FlagOperations().gerarFlag(lblDtProd.getText());
+
+        } catch (Exception ex) {
             Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
         }
-           
 
         new CambioFlagView().setVisible(true);
 
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
-
-    public static void buscarLinhaFiltrada() {
-
-        for (int i = 0; i < tbMainViewDarkList.getRowCount(); i++) {
-
-        }
-
-    }
 
 
     private void cbTipoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbTipoItemStateChanged
@@ -833,20 +571,55 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
     }//GEN-LAST:event_cbTipoItemStateChanged
 
     private void tbMainViewDarkListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbMainViewDarkListMouseClicked
-        // TODO add your handling code here:
+         
+            ///RESETAR 
+            
+            FinalNumber = 0;
+            Incremental = 0;
+
+            //
+            
+            if (SwingUtilities.isRightMouseButton(evt)) {
+
+                if (tbMainViewDarkList.getSelectedRow() > -1) {
+
+                    try {
+                        long domselecionado = Long.parseLong(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 0).toString());
+                        LocalDate dataSelecioanda = LocalDate.parse(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 1).toString());
+                        
+                        
+                        NumeroOriginalSelecionadoTabela=
+                                
+                                new Util().obterNumeroDaLinhaTabelaSelecionadaOriginal(domselecionado,
+                                        
+                                        dataSelecioanda,
+                                        txt_filtro,
+                                        Incremental,
+                                        FinalNumber,
+                                        SelectedFile);
+                        
+                        
+                        String Verificador = tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 5).toString();
+                        
+                        validador3 = Verificador.toLowerCase().matches(".*apro.*");
+                        
+                        validador2 = !Verificador.equals("No permitido cambios");
+                        
+                        validador = Verificador.contains("Nueva Linea/Aprobacion");
+                        
+                        UtilMainTable.mostrarMenuFlutuante(evt.getComponent(), evt.getX(), evt.getY(), AbrirCloseMode, AbrirAdicao, tbMainViewDarkList, validador3, validador, validador2);
+                    } catch (IOException ex) {
+                        Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                }
+
+            }
     }//GEN-LAST:event_tbMainViewDarkListMouseClicked
 
     private void tbMainViewDarkListMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbMainViewDarkListMousePressed
         try {
-            SortNumber = 0;
-            DefinitionNumber = 0;
-            if (tbMainViewDarkList.getSelectedRow() > -1) {
-                long domselecionado = Long.parseLong(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 0).toString());
-                LocalDate dataSelecioanda = LocalDate.parse(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 1).toString());
-
-                getFreezeTable(domselecionado, dataSelecioanda);
-
-            }
+       
 
             // TODO add your handling code here:
         } catch (Exception ex) {
@@ -856,7 +629,11 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
     }//GEN-LAST:event_tbMainViewDarkListMousePressed
 
     private void txt_filtroKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_filtroKeyPressed
-        filterTable();
+
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        } else {
+            filterTable();
+        }
 
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_filtroKeyPressed
@@ -870,13 +647,13 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>((DefaultTableModel) tbMainViewDarkList.getModel());
         tbMainViewDarkList.setRowSorter(sorter);
 
-        // Verifica se o sorter já está inicializado
+        // Verifica se o sorter j� est� inicializado
         if (sorter.getSortKeys().isEmpty()) {
-            // Define uma ordem de classificação padrão para evitar o erro de referência nula
+            // Define uma ordem de classifica��o padr�o para evitar o erro de refer�ncia nula
             sorter.setSortKeys(List.of(new RowSorter.SortKey(cbTipo.getSelectedIndex(), SortOrder.ASCENDING)));
         }
 
-        // Define o filtro para a coluna 2 (índice 1)
+        // Define o filtro para a coluna 2 (�ndice 1)
         sorter.setRowFilter(RowFilter.regexFilter(searchText, cbTipo.getSelectedIndex()));
     }
 
@@ -885,31 +662,6 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
      */
     public static void main(String args[]) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
 
-//     PlasticLookAndFeel.setPlasticTheme(new ExperienceBlue());
-//            UIManager.setLookAndFeel(new PlasticLookAndFeel());
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(DarklistManagerView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(DarklistManagerView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(DarklistManagerView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(DarklistManagerView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-        //</editor-fold>
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -940,35 +692,4 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
     public static javax.swing.JTable tbMainViewDarkList;
     public static javax.swing.JTextField txt_filtro;
     // End of variables declaration//GEN-END:variables
-}
-
-class CentralizedCellRenderers extends DefaultTableCellRenderer {
-
-    private static final Color RED = Color.RED;
-    private static final Color WHITE = Color.WHITE;
-
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
-        if (component instanceof JLabel) {
-            ((JLabel) component).setHorizontalAlignment(SwingConstants.CENTER);
-        }
-
-        boolean status = (boolean) table.getValueAt(row, table.getColumn("En Darklist?").getModelIndex());
-        if (status) {
-            component.setBackground(RED);
-            component.setForeground(WHITE);
-        } else {
-            // Restaura as cores padrão para as células não afetadas
-            component.setBackground(table.getBackground());
-            component.setForeground(table.getForeground());
-        }
-
-        if (isSelected) {
-            component.setBackground(table.getSelectionBackground());
-            component.setForeground(table.getSelectionForeground());
-        }
-
-        return component;
-    }
 }

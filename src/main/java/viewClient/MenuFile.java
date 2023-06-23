@@ -4,7 +4,7 @@
  */
 package viewClient;
 
-import View.*;
+import br.com.kantar.pathManager.Manager;
 import java.awt.BorderLayout;
 
 import java.awt.event.MouseAdapter;
@@ -18,10 +18,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import msgs.Pbar;
 import sftp.ConfiguracoesSFTPModel;
-import static sftp.ConnectionFactory.downloadDarklistFile;
-import static sftp.ConnectionFactory.downloadLoglistFile;
+import sftp.RemoteOperations;
 import sftp.SFTPConnection;
+import static viewClient.DarklistManagerViewClient.CarregarDarkList;
+import static viewClient.DarklistManagerViewClient.carregarLogAlteracoes;
 import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
 import static viewClient.Visualize.loadDarkListEditMode;
 
@@ -29,10 +31,11 @@ import static viewClient.Visualize.loadDarkListEditMode;
  *
  * @author Eduardo.Fernando
  */
-public class MenuFile extends javax.swing.JFrame {
-    
+public final class MenuFile extends javax.swing.JFrame {
+
     public static File SelectedFile;
-    UtilTable ut;
+
+    private RemoteOperations Remote = null;
 
     /**
      * Creates new form DarklistListFiles
@@ -41,195 +44,154 @@ public class MenuFile extends javax.swing.JFrame {
         jTable2.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                
+
                 try {
                     DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
                     df.setNumRows(0);
                     int row = jTable2.getSelectedRow();
-                    String data = jTable2.getValueAt(row, 0).toString();
+
                     String arquivo = jTable2.getValueAt(row, 1).toString();
-                    JFrame progressFrame = new JFrame() {
-                        {
-                            // Configurações do JFrame
-                            setTitle("Aguardando processo");
-                            setSize(300, 100);
-                            setUndecorated(true);
-                            setLocationRelativeTo(null);
 
-                            // Criação do JProgressBar
-                            JProgressBar progressBar = new JProgressBar();
-                            progressBar.setIndeterminate(true); // Configura o modo indeterminado
-
-                            // Adiciona o JProgressBar ao JFrame
-                            getContentPane().add(progressBar, BorderLayout.CENTER);
-
-                            // Configura o comportamento ao fechar o JFrame
-                            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-                            // Exibe o JFrame
-                            setVisible(true);
-                        }
-                    };
-                    
                     new Thread() {
-                        
+
                         public void run() {
-                            
+
                             try {
-                                
-                                progressFrame.setVisible(true);
-                                downloadLoglistFile(jTable2.getValueAt(jTable2.getSelectedRow(), 1).toString());
-                                SelectedFile = new File("C:\\teste\\Nova pasta\\" + jTable2.getValueAt(jTable2.getSelectedRow(), 1));
-                                DarklistManagerViewClient.loadLog();
+
+                                Pbar.Progresso.setVisible(true);
+
+                                SelectedFile = new File(Manager.getRoot().get("caminho_local_temp_logFile") + jTable2.getValueAt(jTable2.getSelectedRow(), 1));
+
+                                carregarLogAlteracoes();
+
                                 DarklistManagerViewClient.lblmode.setText("Log View");
+
                                 DarklistManagerViewClient.lblDtProd.setText(arquivo.substring(0, 8));
-                                progressFrame.setVisible(false);
+
+                                Pbar.Progresso.setVisible(false);
+
                             } catch (Exception ex) {
                                 Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                            
+
                         }
-                        
+
                     }.start();
-                    
+
                 } catch (Exception ex) {
                     Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                
+
                 dispose();
-                ut = UtilTable.getInstance();
-                ut.realizaAjuste(jTable1);
-                
+
             }
         });
     }
-    
+
     public void addTableMouseListener() {
 
-//        
-        jTable1.addMouseListener(new MouseAdapter() {
+        TableDatasDark.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                
-                int row = jTable1.getSelectedRow();
-                String data = jTable1.getValueAt(row, 0).toString();
-                String arquivo = jTable1.getValueAt(row, 1).toString();
-                
+
+                int row = TableDatasDark.getSelectedRow();
+                String data = TableDatasDark.getValueAt(row, 0).toString();
+                String arquivo = TableDatasDark.getValueAt(row, 1).toString();
+
                 String dataP = DarklistManagerViewClient.lblDtProd.getText();
                 DarklistManagerViewClient.lblmode.setText("Darklist");
-                
+
                 if (!(data.equals(dataP))) {
-                    
+
                     int resposta = JOptionPane.showConfirmDialog(null, "Para el historico del dark, esta disponible solo para visualizacion!, quiere abrir ?",
                             "Confirmacion",
                             JOptionPane.YES_OPTION);
-                    
+
                     if (resposta == JOptionPane.YES_OPTION) {
-                        
+
                         try {
-                            
+
                             new Visualize().setVisible(true);
                             loadDarkListEditMode(data, arquivo);
-                            
+
                         } catch (Exception ex) {
                             Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
-                    
+
                 } else {
-                    
+
                     try {
                         DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
                         df.setNumRows(0);
-                        
-                        JFrame progressFrame = new JFrame() {
-                            {
-                                // Configurações do JFrame
-                                setTitle("Aguardando processo");
-                                setSize(300, 100);
-                                setUndecorated(true);
-                                setLocationRelativeTo(null);
 
-                                // Criação do JProgressBar
-                                JProgressBar progressBar = new JProgressBar();
-                                progressBar.setIndeterminate(true); // Configura o modo indeterminado
-
-                                // Adiciona o JProgressBar ao JFrame
-                                getContentPane().add(progressBar, BorderLayout.CENTER);
-
-                                // Configura o comportamento ao fechar o JFrame
-                                setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-                                // Exibe o JFrame
-                                setVisible(true);
-                            }
-                        };
-                        
                         new Thread() {
-                            
+
                             public void run() {
-                                
+
                                 try {
-                                    
-                                    progressFrame.setVisible(true);
-                                    downloadDarklistFile(jTable1.getValueAt(jTable1.getSelectedRow(), 1).toString());
-                                    SelectedFile = new File("C:\\teste\\Nova pasta\\spdark.lst");
-                                    DarklistManagerViewClient.loadDarkList();
-                                    
-                                    progressFrame.setVisible(false);
+
+                                    Pbar.Progresso.setVisible(true);
+
+                                    Remote.downloadArquivoDarkList(TableDatasDark.getValueAt(TableDatasDark.getSelectedRow(), 1).toString());
+
+                                    SelectedFile = new File(Manager.getRoot().get("caminho_local_temp_darkFile"));
+
+                                    CarregarDarkList(SelectedFile);
+
+                                    Pbar.Progresso.setVisible(false);
+
                                 } catch (Exception ex) {
                                     Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
                                 }
-                                
+
                             }
-                            
+
                         }.start();
-                        
+
                     } catch (Exception ex) {
                         Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    
+
                     dispose();
-                    ut = UtilTable.getInstance();
-                    ut.realizaAjuste(jTable1);
-                    
                 }
-                
+
             }
         });
-        
+
     }
-    
+
     public MenuFile() throws Exception {
         initComponents();
-        
+        Remote = new RemoteOperations(new ConfiguracoesSFTPModel("LATAM", 0, "regional.latam", "gDItMm7K", "sftp.kantaribopemedia.com", 22));
+
         ConfiguracoesSFTPModel sd = new ConfiguracoesSFTPModel("LATAM", 0, "regional.latam", "gDItMm7K", "sftp.kantaribopemedia.com", 22);
         SFTPConnection ser = new SFTPConnection(sd);
-        
+
         ser.obterSessao();
-        
+
         ser.Conexao();
-        
+
         Map<String, String> fileMap = ser.getDarkList();
-        
+
         SwingUtilities.invokeLater(() -> {
-            
-            DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
-            
+
+            DefaultTableModel tableModel = (DefaultTableModel) TableDatasDark.getModel();
+
             fileMap.forEach((data, coluna) -> tableModel.addRow(new Object[]{data, coluna}));
-            
+
         });
-        
+
         Map<String, String> fileMapLog = ser.getLog();
-        
+
         SwingUtilities.invokeLater(() -> {
-            
+
             DefaultTableModel tableModel = (DefaultTableModel) jTable2.getModel();
-            
+
             fileMapLog.forEach((data, coluna) -> tableModel.addRow(new Object[]{data, coluna}));
-            
+
         });
-        
+
         addTableMouseListener();
         addTableMouseListenerLog();
     }
@@ -247,7 +209,7 @@ public class MenuFile extends javax.swing.JFrame {
         tbPane = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        TableDatasDark = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
@@ -258,11 +220,13 @@ public class MenuFile extends javax.swing.JFrame {
         pnMain.setBackground(new java.awt.Color(255, 255, 255));
         pnMain.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        tbPane.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
         jPanel1.setBackground(new java.awt.Color(204, 255, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jTable1.setAutoCreateRowSorter(true);
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        TableDatasDark.setAutoCreateRowSorter(true);
+        TableDatasDark.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -285,7 +249,7 @@ public class MenuFile extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(TableDatasDark);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 440, 210));
 
@@ -322,7 +286,7 @@ public class MenuFile extends javax.swing.JFrame {
 
         jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 440, 210));
 
-        tbPane.addTab("Alterações", jPanel2);
+        tbPane.addTab("Cambio", jPanel2);
 
         pnMain.add(tbPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 460, 260));
 
@@ -383,11 +347,11 @@ public class MenuFile extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable TableDatasDark;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JPanel pnMain;
     private javax.swing.JTabbedPane tbPane;

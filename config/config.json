@@ -1,0 +1,56 @@
+[
+  {
+    "processo": "caminho_local_temp_producao_dia",
+    "caminho": "D:/environment/temp/EntregasOficiaisConfiguracao/OficialPaths/Panama/PRO_DIA/logDia.txt"
+  },
+  {
+    "processo": "caminho_local_temp_logFile",
+    "caminho": "D:/environment/temp/EntregasOficiaisConfiguracao/OficialPaths/Panama/LOG/"
+  },
+  {
+    "processo": "caminho_local_temp_darkFile",
+    "caminho": "D:/environment/temp/EntregasOficiaisConfiguracao/OficialPaths/Panama/DKL/spdark.lst"
+  },
+  {
+    "processo": "caminho_local_temp_whiteFile",
+    "caminho": "D:/environment/temp/EntregasOficiaisConfiguracao/OficialPaths/Panama/WHTL/"
+  },
+  {
+    "processo": "caminho_local_temp_flag",
+    "caminho": "D:/environment/temp/EntregasOficiaisConfiguracao/OficialPaths/Panama/FLAG/true.txt"
+  } ,
+  
+     {
+    "processo": "caminho_oficial_temp_darkFile_servidor",
+    "caminho": "\\\\kimbrspp565\\ProducaoLatam\\PA\\1.Telepanel\\database\\definitivo\\cf\\PaRt\\spdark.lst"
+  },
+      {
+    "processo": "caminho_oficial_temp_darkFile_folder_only_servidor",
+    "caminho": "\\\\kimbrspp565\\ProducaoLatam\\PA\\1.Telepanel\\database\\definitivo\\cf\\PaRt\\"
+  },
+       {
+    "processo": "caminho_oficial_out_telepanel_panama_servidor",
+    "caminho": "\\\\kimbrspp565\\ProducaoLatam\\PA\\1.Telepanel\\database\\definitivo\\out\\PaRt\\"
+  },
+  
+    {
+    "processo": "caminho_ftp_producao_dia",
+    "caminho": "/IMI/GerenciadorCambios/Panama/"
+  },    {
+    "processo": "caminho_ftp_producao_dia_completo_arquivo",
+    "caminho": "/IMI/GerenciadorCambios/Panama/logDia.txt"
+  },
+      {
+    "processo": "caminho_ftp_darklist",
+    "caminho": "/IMI/GerenciadorCambios/Panama/def/dkl/originals/"
+  },
+       {
+    "processo": "caminho_ftp_log",
+    "caminho": "/IMI/GerenciadorCambios/Panama/def/dkl/log/"
+  },
+       {
+    "processo": "caminho_ftp_flag",
+    "caminho": "/IMI/GerenciadorCambios/Panama/def/dkl/flag/"
+  }
+     
+]

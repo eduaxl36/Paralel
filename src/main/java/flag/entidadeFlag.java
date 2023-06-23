@@ -5,6 +5,7 @@
 package flag;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  *
@@ -103,6 +104,52 @@ private String Comment;
         sb.append(", Flag=").append(Flag);
         sb.append('}');
         return sb.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + this.Id;
+        hash = 23 * hash + Objects.hashCode(this.Autor);
+        hash = 23 * hash + Objects.hashCode(this.TipoCambio);
+        hash = 23 * hash + Objects.hashCode(this.DataAbertura);
+        hash = 23 * hash + Objects.hashCode(this.DataFechamento);
+        hash = 23 * hash + (this.Flag ? 1 : 0);
+        hash = 23 * hash + Objects.hashCode(this.Comment);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final entidadeFlag other = (entidadeFlag) obj;
+        if (this.Id != other.Id) {
+            return false;
+        }
+        if (this.Flag != other.Flag) {
+            return false;
+        }
+        if (!Objects.equals(this.Autor, other.Autor)) {
+            return false;
+        }
+        if (!Objects.equals(this.TipoCambio, other.TipoCambio)) {
+            return false;
+        }
+        if (!Objects.equals(this.Comment, other.Comment)) {
+            return false;
+        }
+        if (!Objects.equals(this.DataAbertura, other.DataAbertura)) {
+            return false;
+        }
+        return Objects.equals(this.DataFechamento, other.DataFechamento);
     }
     
     

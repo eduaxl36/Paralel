@@ -36,6 +36,11 @@ public class ViewDarkAdd extends javax.swing.JFrame {
      */
     
     JDialog modalDialo;
+    
+    public static boolean instanciaAbertaAdicao = false;
+    
+    
+    
     public ViewDarkAdd() {
         initComponents();
         FlatLightLaf.install();
@@ -43,6 +48,8 @@ public class ViewDarkAdd extends javax.swing.JFrame {
         lblUserName.setText(username);
         JDialog modalDialog = new JDialog();
         modalDialog.setModal(true);
+        
+        
 
     }
 
@@ -72,10 +79,15 @@ public class ViewDarkAdd extends javax.swing.JFrame {
         lblUserName = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Inclusion de Hogar en Darklist");
         setAlwaysOnTop(true);
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         pn.setBackground(new java.awt.Color(255, 255, 255));
         pn.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -117,6 +129,8 @@ public class ViewDarkAdd extends javax.swing.JFrame {
         jSeparator3.setBackground(new java.awt.Color(204, 204, 204));
         jSeparator3.setForeground(new java.awt.Color(204, 204, 204));
         pn.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 8, 340, 20));
+
+        finalHouseHoldDate.setLocale(new java.util.Locale("pt", "BR", ""));
         pn.add(finalHouseHoldDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 280, 160, -1));
 
         InitialHouseHoldDate.setCurrentView(new datechooser.view.appearance.AppearancesList("Swing",
@@ -160,6 +174,7 @@ public class ViewDarkAdd extends javax.swing.JFrame {
                 (datechooser.view.BackRenderer)null,
                 false,
                 true)));
+    InitialHouseHoldDate.setLocale(new java.util.Locale("pt", "BR", ""));
     InitialHouseHoldDate.setBehavior(datechooser.model.multiple.MultyModelBehavior.SELECT_SINGLE);
     InitialHouseHoldDate.setShowOneMonth(true);
     pn.add(InitialHouseHoldDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 200, 160, -1));
@@ -307,6 +322,15 @@ public class ViewDarkAdd extends javax.swing.JFrame {
         }
   
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+
+            instanciaAbertaAdicao=false;
+
+
+
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formWindowClosed
 
     /**
      * @param args the command line arguments

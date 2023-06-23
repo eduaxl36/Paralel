@@ -6,8 +6,6 @@ package dao;
 
 
 import Entities.Darklist;
-import static View.ViewDarkAdd.InitialHouseHoldDate;
-import static View.ViewDarkAdd.Txt_HouseHold;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,7 +20,6 @@ import java.util.stream.Collectors;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
-import static View.DarklistManagerView.tbMainViewDarkList;
 
 /**
  *

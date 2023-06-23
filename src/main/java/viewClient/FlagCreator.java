@@ -20,22 +20,43 @@ import org.apache.commons.io.FileUtils;
 public class FlagCreator {
     
     
-    public static void createFlag(List<entidadeFlag> flag) throws IOException{
     
     
+    
+    
+    public static void createFlag(List<entidadeFlag> flag,String Dia) throws IOException{
+    
+new File("C:\\teste\\Nova pasta\\true.txt").delete();
+      
+               final  String mensagem = String.format("Solicitacion para el cambio en Darklist\n"
+                     + "\n"
+                     + "El user: %s "
+                     + "\n"
+                     + "Fecha del Darklist : %s\n", flag.get(0).getAutor(),Dia);
+
+                
+ FileUtils.write(new File("C:\\teste\\Nova pasta\\true.txt"),mensagem, StandardCharsets.UTF_8,true);
+      
+
+
+
      flag.forEach(x->{
      
      
              
          try {
-             FileUtils.write(new File("c:/teste/ss.txt"),
+             
+           
+             
+             FileUtils.write(new File("C:\\teste\\Nova pasta\\true.txt"),
                      
-                        x.getId()+";"+
-                        x.getDataAbertura()+";"+
-                        x.getDataFechamento()+";"+
-                        x.getComment()+";"+
-                        x.getAutor()+";"+
-                        x.getTipoCambio()+"\n"
+                        "\n"+
+                        "Hogar: "+x.getId()+"\n"+
+                        "Fecha Inicio: "+x.getDataAbertura()+"\n"+
+                        "Fecha Cerramiento:"+x.getDataFechamento()+"\n"+
+                        "Obs. : "+x.getComment()+"\n"+
+                        "Autor : "+x.getAutor()+"\n"+
+                        "Cambio Relizado : "+x.getTipoCambio()+"\n\n"
                      ,
                      
                      StandardCharsets.UTF_8,true);
@@ -48,10 +69,7 @@ public class FlagCreator {
      });
      
      
-        
-
-      
-
+  
     
     }
     

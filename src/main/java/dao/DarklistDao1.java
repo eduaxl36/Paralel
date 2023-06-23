@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -54,6 +55,11 @@ public class DarklistDao1 {
             String Abertura = RawLines[3].trim();
             String Fechamento = RawLines[4].trim().replaceAll("-1", "20501231");
             String Observacao = RawLines[7].trim();
+            
+            
+            byte[] bytes = Observacao.getBytes(Charset.forName("ISO-8859-1"));
+           String observacaoANSI = new String(bytes, Charset.forName("UTF-8"));
+            
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
             LocalDate AberturaAsLc = LocalDate.parse(Abertura, formatter);
             LocalDate FechamentoAsLc = LocalDate.parse(Fechamento, formatter);
@@ -62,7 +68,7 @@ public class DarklistDao1 {
                     Domicilio,
                     AberturaAsLc,
                     FechamentoAsLc,
-                    Observacao,
+                    observacaoANSI,
                     verificartSeEstaEmDark(AberturaAsLc,FechamentoAsLc)
             );
 

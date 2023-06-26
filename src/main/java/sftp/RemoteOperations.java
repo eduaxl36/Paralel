@@ -86,7 +86,7 @@ public class RemoteOperations {
 
     public void downloadArquivoDarkList(String DarklistFile) throws Exception {
 
-        JOptionPane.showMessageDialog(null, ARQUIVO_DARKLIST_LOCAL_TEMP);
+       
         
         Connection.downloadArquivo(ARQUIVO_DARKLIST_REMOTO+DarklistFile, ARQUIVO_DARKLIST_LOCAL_TEMP);
 

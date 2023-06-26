@@ -100,10 +100,10 @@ public class Util {
 
     }
 
-    public void exportarConteudoParaCsv(JTable table, String filePath) {
+    public void exportarConteudoParaCsv(String filePath) {
 
         try (FileWriter writer = new FileWriter(filePath)) {
-            TableModel model = table.getModel();
+            TableModel model = Tabela.getModel();
             int rowCount = model.getRowCount();
             int columnCount = model.getColumnCount();
 

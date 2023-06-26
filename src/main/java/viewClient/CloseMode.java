@@ -21,11 +21,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.apache.commons.lang.time.DateUtils;
-import static viewClient.DarklistManagerViewClient.filterTable;
 import static viewClient.DarklistManagerViewClient.lblDtProd;
 import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
 import static viewClient.DarklistManagerViewClient.txt_filtro;
 import static viewClient.DarklistManagerViewClient.NumeroOriginalSelecionadoTabela;
+import static viewClient.DarklistManagerViewClient.filtrarTabelaCriterio;
 
 /**
  *
@@ -254,7 +254,7 @@ public class CloseMode extends javax.swing.JFrame {
                     this.dispose();
                     txt_filtro.setText("");
                     new Util(tbMainViewDarkList).ajustarFormataColunasTabelaConteudo();
-                    filterTable();
+                    filtrarTabelaCriterio();
 
                 }
 

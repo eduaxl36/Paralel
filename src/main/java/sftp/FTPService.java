@@ -30,6 +30,7 @@ public abstract class FTPService {
     public abstract boolean validaDestinoRemoto(String Remoto) throws Exception ;
     
      public abstract void getValidConexion() throws Exception ;
+     
      public abstract void closeConexion() throws Exception ;
 
     public ConfiguracoesSFTPModel getModel() {

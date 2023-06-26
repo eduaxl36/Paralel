@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.JOptionPane;
 import org.apache.commons.io.FileUtils;
 
 /**
@@ -53,7 +54,8 @@ public class SFTPOperations {
         List<LocalDate> datas = new ArrayList();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-        File pasta = new File(Manager.getRoot().get("caminho_oficial_out_telepanel_panama"));
+
+        File pasta = new File(Manager.getRoot().get("caminho_oficial_out_telepanel_panama_servidor"));
         File[] arquivos = pasta.listFiles((dir, nome) -> nome.matches("\\d{8}\\.vsl"));
 
         for (File x : arquivos) {
@@ -76,6 +78,7 @@ public class SFTPOperations {
 
     public void uploadDataAtualizadaProducao() throws Exception {
 
+     
         this.InstanciaConexao.uploadArquivo(Manager.getRoot().get("caminho_local_temp_producao_dia"), Manager.getRoot().get("caminho_ftp_producao_dia_completo_arquivo"));
 
     }
@@ -91,13 +94,29 @@ public class SFTPOperations {
         this.InstanciaConexao.uploadArquivo(Manager.getRoot().get("caminho_local_temp_logFile") + Data + "_log.csv", Manager.getRoot().get("caminho_ftp_log") + Data + "_log.csv");
 
     }
+    
+    
+    public void carregarDarklistAtual() throws SftpException, InterruptedException, JSchException{
+    
+    
+    String DataDarklist = captarUltimoDiaProducao();
+    
+
+    this.InstanciaConexao.uploadArquivo(Manager.getRoot().get("caminho_oficial_temp_darkFile_servidor"),
+           Manager.getRoot().get("caminho_ftp_darklist")+"/spdark.lst".replaceAll("spdark.lst", DataDarklist+"_spdark.lst"));
+    
+    
+    
+    }
+    
+    
 
     public static void main(String[] args) throws JSchException, InterruptedException, SftpException, Exception {
 
         SFTPOperations x = SFTPOperations.getInstance();
-//        x.criarDataProducao();
-//        x.uploadDataAtualizadaProducao();
-//          x.uploadCurrentDarkList("20230619");
+        x.criarDataProducao();
+        x.uploadDataAtualizadaProducao();
+        x.carregarDarklistAtual();
 
     }
 

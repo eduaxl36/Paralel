@@ -10,16 +10,16 @@ import Util.Util;
 import br.com.kantar.pathManager.Manager;
 import br.com.kantar.sftp.FlagOperations;
 import static br.com.kantar.sftp.FlagOperations.Flags;
-import br.com.kantar.sftp.SFTPOperations;
 import com.formdev.flatlaf.FlatLightLaf;
+import dao.DarklistDao;
 import dao.DarklistDao1;
 import dao.LogDao;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.*;
+import java.rmi.Remote;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
+import msgs.Pbar;
 import org.apache.commons.io.FileUtils;
 import sftp.ConfiguracoesSFTPModel;
 import sftp.RemoteOperations;
@@ -39,16 +40,20 @@ import static viewClient.ViewDarkAdd.instanciaAbertaAdicao;
  *
  * @author Eduardo.Fernando
  */
-public class DarklistManagerViewClient extends javax.swing.JFrame {
+public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
+    private int Incremental;
+    private int FinalNumber;
     
-    private  int Incremental;
-    private  int FinalNumber;
+    private DarklistDao Darklist;
     
+    private DateTimeFormatter Formatador;
+    
+
     static boolean validador = true;
     static boolean validador2 = true;
     static boolean validador3 = false;
-    
+
     static int NumeroOriginalSelecionadoTabela;
 
     private final ActionListener AbrirAdicao = (ActionEvent e) -> instanciaAdicaoChecker();
@@ -59,35 +64,51 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
     public static final String PATH_LOG_DIARIO = Manager.getRoot().get("caminho_local_temp_producao_dia");
 
     private static RemoteOperations Remote;
-    
-     public void instanciaAdicaoChecker(){
-    
-    
+
+    public void instanciaAdicaoChecker() {
+
         if (!instanciaAbertaAdicao) {
             instanciaAbertaAdicao = true;
             new ViewDarkAdd().setVisible(true);
-        } else {
-//            JOptionPane.showMessageDialog(null, "A instância já está aberta.");
-        }
+        } 
+
+    }
+
     
-    
+     public DarklistManagerViewClient() throws IOException, Exception {
+
+       Formatador  = DateTimeFormatter.ofPattern("yyyyMMdd"); 
+
+         
+        Remote = new RemoteOperations(new ConfiguracoesSFTPModel("LATAM", 0, "regional.latam", "gDItMm7K", "sftp.kantaribopemedia.com", 22));
+
+        UtilMainTable = new MainTableUtil();
+
+        Flags.clear();
+
+        FlatLightLaf.install();
+
+        initComponents();
+
+        anularEnterDentroFiltro();
+
+        Remote.downloadNumeralDia();
+
+        lblDtProd.setText(FileUtils.readFileToString(new File(PATH_LOG_DIARIO)));
+
     }
     
-    public void instanciaMudancaChecker(){
     
-    
+    public void instanciaMudancaChecker() {
+
         if (!instanciaMudancaAdicao) {
             instanciaMudancaAdicao = true;
             new CloseMode().setVisible(true);
-        } else {
-//            JOptionPane.showMessageDialog(null, "A instância já está aberta.");
         }
-    
-    
+
     }
-   
-    public  static boolean validarSeProucaoJaFoi(long Domicilio) {
-        
+
+    public static boolean validarSeProucaoJaFoi(long Domicilio) {
 
         for (int i = 0; i < tbMainViewDarkList.getRowCount(); i++) {
 
@@ -107,10 +128,28 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
 
     }
 
-    public  static void carregarLogAlteracoes() throws IOException, Exception {
+     public static void filtrarTabelaCriterio() {
+         
+        String searchText = txt_filtro.getText();
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>((DefaultTableModel) tbMainViewDarkList.getModel());
+        tbMainViewDarkList.setRowSorter(sorter);
+
+        // Verifica se o sorter j� est� inicializado
+        if (sorter.getSortKeys().isEmpty()) {
+            // Define uma ordem de classifica��o padr�o para evitar o erro de refer�ncia nula
+            sorter.setSortKeys(List.of(new RowSorter.SortKey(cbTipo.getSelectedIndex(), SortOrder.ASCENDING)));
+        }
+
+        // Define o filtro para a coluna 2 (�ndice 1)
+        sorter.setRowFilter(RowFilter.regexFilter(searchText, cbTipo.getSelectedIndex()));
+    }
+     
+     
+     
+    public static void carregarLogAlteracoes() throws IOException, Exception {
 
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd");
-        
+
         Remote.downloadArquivoLista(SelectedFile.getName());
 
         new LogDao(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), SelectedFile).Logs().forEach(x -> {
@@ -155,62 +194,9 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
 
     }
 
-    public static void CarregarDarkList(File DarkFile) throws IOException, Exception {
+  
 
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd");
-                
-        new DarklistDao1(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), DarkFile).getStatus().forEach((var x) -> {
-
-            DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
-
-            String allowChange = "No permitido cambios";
-
-            if (x != null) {
-
-                if (x.isStatus()) {
-
-                    allowChange = "Listo para Cambio";
-
-                }
-
-                df.addRow(new Object[]{
-                    x.getId(),
-                    x.getDataAbertura(),
-                    x.getDataFechamento(),
-                    x.getComentario(),
-                    x.isStatus(),
-                    allowChange
-
-                });
-
-            }
-
-        });
-
-        new Util(tbMainViewDarkList).ajustarFormataColunasTabelaConteudo();
-
-    }
-
-    public DarklistManagerViewClient() throws IOException, Exception {
-
-        Remote = new RemoteOperations(new ConfiguracoesSFTPModel("LATAM", 0, "regional.latam", "gDItMm7K", "sftp.kantaribopemedia.com", 22));
-      
-        UtilMainTable = new MainTableUtil();
-
-        Flags.clear();
-
-        FlatLightLaf.install();
-
-        initComponents();
-
-        anularEnterDentroFiltro();
-
-        Remote.downloadNumeralDia();
-        
-        lblDtProd.setText(FileUtils.readFileToString(new File(PATH_LOG_DIARIO)));
-        
-
-    }
+   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -417,69 +403,24 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
 
     }//GEN-LAST:event_tbMainViewDarkListMouseEntered
 
+    
+    
+   
+    
+    
+    
+    
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        int resposta = JOptionPane.showConfirmDialog(null, "Desea enviar los cambios para la equipe regional?",
-                "Confirmacion",
-                JOptionPane.YES_OPTION);
 
-        if (resposta == JOptionPane.YES_OPTION) {
-
-            JFrame progressFrame = new JFrame() {
-                {
-                    // Configura��es do JFrame
-                    setTitle("Aguardando processo");
-                    setSize(300, 100);
-                    setUndecorated(true);
-                    setLocationRelativeTo(null);
-
-                    // Cria��o do JProgressBar
-                    JProgressBar progressBar = new JProgressBar();
-                    progressBar.setIndeterminate(true); // Configura o modo indeterminado
-
-                    // Adiciona o JProgressBar ao JFrame
-                    getContentPane().add(progressBar, BorderLayout.CENTER);
-
-                    // Configura o comportamento ao fechar o JFrame
-                    setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-                    // Exibe o JFrame
-                    setVisible(true);
-                }
-            };
-
-            new Thread() {
-
-                public void run() {
-
-                    try {
-
-                        progressFrame.setVisible(true);
-
-                        String arquivoSalvoLog = Manager.getRoot().get("caminho_local_temp_logFile") + lblDtProd.getText() + "_log.csv";
-
-                        JOptionPane.showMessageDialog(null, arquivoSalvoLog);
-                        
-                        
-                        new Util(tbMainViewDarkList).exportarConteudoParaCsv(tbMainViewDarkList, arquivoSalvoLog);
-                       
-
-                        new SFTPOperations().uploadLogFile(lblDtProd.getText());
-
-
-                        progressFrame.setVisible(false);
-                    } catch (Exception ex) {
-                        Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                }
-
-            }.start();
-
-        } else if (resposta == JOptionPane.NO_OPTION) {
-
-            JOptionPane.showMessageDialog(null, "Voc� selecionou 'N�o'.");
-
-        }
+        
+                 
+        Darklist = new DarklistDao(
+                
+                                    LocalDate.parse(lblDtProd.getText(), Formatador),               
+                                    tbMainViewDarkList
+        
+                );
+        Darklist.uploadLogAlteracoes();
 
 
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -501,27 +442,6 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
-        JFrame progressFrame = new JFrame() {
-            {
-
-                setTitle("Aguardando processo");
-                setSize(300, 100);
-                setUndecorated(true);
-                setLocationRelativeTo(null);
-
-                JProgressBar progressBar = new JProgressBar();
-                progressBar.setIndeterminate(true); // Configura o modo indeterminado
-
-                // Adiciona o JProgressBar ao JFrame
-                getContentPane().add(progressBar, BorderLayout.CENTER);
-
-                // Configura o comportamento ao fechar o JFrame
-                setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
-                // Exibe o JFrame
-                setVisible(true);
-            }
-        };
         try {
 
             new Thread() {
@@ -529,11 +449,12 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
                 public void run() {
 
                     try {
-                        progressFrame.setVisible(true);
+                        Pbar.Progresso.setVisible(true);
 
                         new MenuFile().setVisible(true);
 
-                        progressFrame.setVisible(false);
+                        Pbar.Progresso.setVisible(false);
+                        
                     } catch (Exception ex) {
                         Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -571,55 +492,48 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
     }//GEN-LAST:event_cbTipoItemStateChanged
 
     private void tbMainViewDarkListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbMainViewDarkListMouseClicked
-         
-            ///RESETAR 
-            
-            FinalNumber = 0;
-            Incremental = 0;
 
-            //
-            
-            if (SwingUtilities.isRightMouseButton(evt)) {
+        ///RESETAR 
+        FinalNumber = 0;
+        Incremental = 0;
 
-                if (tbMainViewDarkList.getSelectedRow() > -1) {
+        //
+        if (SwingUtilities.isRightMouseButton(evt)) {
 
-                    try {
-                        long domselecionado = Long.parseLong(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 0).toString());
-                        LocalDate dataSelecioanda = LocalDate.parse(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 1).toString());
-                        
-                        
-                        NumeroOriginalSelecionadoTabela=
-                                
-                                new Util().obterNumeroDaLinhaTabelaSelecionadaOriginal(domselecionado,
-                                        
-                                        dataSelecioanda,
-                                        txt_filtro,
-                                        Incremental,
-                                        FinalNumber,
-                                        SelectedFile);
-                        
-                        
-                        String Verificador = tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 5).toString();
-                        
-                        validador3 = Verificador.toLowerCase().matches(".*apro.*");
-                        
-                        validador2 = !Verificador.equals("No permitido cambios");
-                        
-                        validador = Verificador.contains("Nueva Linea/Aprobacion");
-                        
-                        UtilMainTable.mostrarMenuFlutuante(evt.getComponent(), evt.getX(), evt.getY(), AbrirCloseMode, AbrirAdicao, tbMainViewDarkList, validador3, validador, validador2);
-                    } catch (IOException ex) {
-                        Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+            if (tbMainViewDarkList.getSelectedRow() > -1) {
 
+                try {
+                    long domselecionado = Long.parseLong(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 0).toString());
+                    LocalDate dataSelecioanda = LocalDate.parse(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 1).toString());
+
+                    NumeroOriginalSelecionadoTabela
+                            = new Util().obterNumeroDaLinhaTabelaSelecionadaOriginal(domselecionado,
+                                    dataSelecioanda,
+                                    txt_filtro,
+                                    Incremental,
+                                    FinalNumber,
+                                    SelectedFile);
+
+                    String Verificador = tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 5).toString();
+
+                    validador3 = Verificador.toLowerCase().matches(".*apro.*");
+
+                    validador2 = !Verificador.equals("No permitido cambios");
+
+                    validador = Verificador.contains("Nueva Linea/Aprobacion");
+
+                    UtilMainTable.mostrarMenuFlutuante(evt.getComponent(), evt.getX(), evt.getY(), AbrirCloseMode, AbrirAdicao, tbMainViewDarkList, validador3, validador, validador2);
+                } catch (IOException ex) {
+                    Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             }
+
+        }
     }//GEN-LAST:event_tbMainViewDarkListMouseClicked
 
     private void tbMainViewDarkListMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbMainViewDarkListMousePressed
         try {
-       
 
             // TODO add your handling code here:
         } catch (Exception ex) {
@@ -632,7 +546,7 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
 
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
         } else {
-            filterTable();
+            filtrarTabelaCriterio();
         }
 
         // TODO add your handling code here:
@@ -642,20 +556,7 @@ public class DarklistManagerViewClient extends javax.swing.JFrame {
 
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_filtroKeyTyped
-    public static void filterTable() {
-        String searchText = txt_filtro.getText();
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>((DefaultTableModel) tbMainViewDarkList.getModel());
-        tbMainViewDarkList.setRowSorter(sorter);
-
-        // Verifica se o sorter j� est� inicializado
-        if (sorter.getSortKeys().isEmpty()) {
-            // Define uma ordem de classifica��o padr�o para evitar o erro de refer�ncia nula
-            sorter.setSortKeys(List.of(new RowSorter.SortKey(cbTipo.getSelectedIndex(), SortOrder.ASCENDING)));
-        }
-
-        // Define o filtro para a coluna 2 (�ndice 1)
-        sorter.setRowFilter(RowFilter.regexFilter(searchText, cbTipo.getSelectedIndex()));
-    }
+   
 
     /**
      * @param args the command line arguments

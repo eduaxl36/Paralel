@@ -5,37 +5,18 @@
 package viewClient;
 
 
+import br.com.kantar.pathManager.Manager;
 import com.formdev.flatlaf.FlatLightLaf;
 import dao.DarklistDao1;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JTable;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
-import javax.swing.SwingUtilities;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
-import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableModel;
 
 
 /**
@@ -45,17 +26,19 @@ import javax.swing.table.TableModel;
 public class Visualize extends javax.swing.JFrame {
 
 
+  public static String  CAMINHO_LOCAL_DARKLIST = Manager.getRoot().get("caminho_local_temp_darkFile");
+    
+    
+    
    
   public static void loadDarkListEditMode(String Data,String DarklistFile) throws IOException, Exception {
 
       
-
-//        donwloadArquivoDarkListNaoEdicao(DarklistFile);
-//      
-//      
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-        new DarklistDao1(LocalDate.parse(Data, fmt).plusDays(1), new File("C:\\teste\\Nova pasta\\"+DarklistFile)).getStatus().forEach(x -> {
+        String DarklistLocal = new File(CAMINHO_LOCAL_DARKLIST).toString();
+
+        new DarklistDao1(LocalDate.parse(Data, fmt).plusDays(1), new File(DarklistLocal+"/"+DarklistFile).getParentFile()).getStatus().forEach(x -> {
 
             DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
 

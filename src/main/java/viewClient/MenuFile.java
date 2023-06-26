@@ -5,25 +5,25 @@
 package viewClient;
 
 import br.com.kantar.pathManager.Manager;
-import java.awt.BorderLayout;
+import dao.DarklistDao1;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import msgs.Pbar;
 import sftp.ConfiguracoesSFTPModel;
 import sftp.RemoteOperations;
 import sftp.SFTPConnection;
-import static viewClient.DarklistManagerViewClient.CarregarDarkList;
 import static viewClient.DarklistManagerViewClient.carregarLogAlteracoes;
+import static viewClient.DarklistManagerViewClient.lblDtProd;
 import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
 import static viewClient.Visualize.loadDarkListEditMode;
 
@@ -45,44 +45,7 @@ public final class MenuFile extends javax.swing.JFrame {
             @Override
             public void mousePressed(MouseEvent e) {
 
-                try {
-                    DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
-                    df.setNumRows(0);
-                    int row = jTable2.getSelectedRow();
-
-                    String arquivo = jTable2.getValueAt(row, 1).toString();
-
-                    new Thread() {
-
-                        public void run() {
-
-                            try {
-
-                                Pbar.Progresso.setVisible(true);
-
-                                SelectedFile = new File(Manager.getRoot().get("caminho_local_temp_logFile") + jTable2.getValueAt(jTable2.getSelectedRow(), 1));
-
-                                carregarLogAlteracoes();
-
-                                DarklistManagerViewClient.lblmode.setText("Log View");
-
-                                DarklistManagerViewClient.lblDtProd.setText(arquivo.substring(0, 8));
-
-                                Pbar.Progresso.setVisible(false);
-
-                            } catch (Exception ex) {
-                                Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-
-                        }
-
-                    }.start();
-
-                } catch (Exception ex) {
-                    Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                dispose();
+             
 
             }
         });
@@ -137,7 +100,11 @@ public final class MenuFile extends javax.swing.JFrame {
 
                                     SelectedFile = new File(Manager.getRoot().get("caminho_local_temp_darkFile"));
 
-                                    CarregarDarkList(SelectedFile);
+                                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+                                 
+                                    LocalDate DataFt = LocalDate.parse(lblDtProd.getText(), formatter);
+
+                                    new DarklistDao1(DataFt, SelectedFile).carregarDarkList();
 
                                     Pbar.Progresso.setVisible(false);
 
@@ -193,7 +160,7 @@ public final class MenuFile extends javax.swing.JFrame {
         });
 
         addTableMouseListener();
-        addTableMouseListenerLog();
+
     }
 
     /**
@@ -282,6 +249,11 @@ public final class MenuFile extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        jTable2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jTable2MousePressed(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTable2);
 
         jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 440, 210));
@@ -303,6 +275,51 @@ public final class MenuFile extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jTable2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MousePressed
+
+           try {
+                    DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
+                    df.setNumRows(0);
+                    int row = jTable2.getSelectedRow();
+
+                    String arquivo = jTable2.getValueAt(row, 1).toString();
+
+                    new Thread() {
+
+                        public void run() {
+
+                            try {
+
+                                Pbar.Progresso.setVisible(true);
+
+                                SelectedFile = new File(Manager.getRoot().get("caminho_local_temp_logFile") + jTable2.getValueAt(jTable2.getSelectedRow(), 1));
+
+                                carregarLogAlteracoes();
+
+                                DarklistManagerViewClient.lblmode.setText("Log View");
+
+                                DarklistManagerViewClient.lblDtProd.setText(arquivo.substring(0, 8));
+
+                                Pbar.Progresso.setVisible(false);
+
+                            } catch (Exception ex) {
+                                Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+
+                        }
+
+                    }.start();
+
+                } catch (Exception ex) {
+                    Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                dispose();
+
+
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTable2MousePressed
 
     /**
      * @param args the command line arguments

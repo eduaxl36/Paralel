@@ -5,6 +5,7 @@
 package dao;
 
 import Entities.Darklist;
+import Util.Util;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,6 +17,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import static viewClient.DarklistManagerViewClient.lblDtProd;
+import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
 
 /**
  *
@@ -109,6 +114,56 @@ public class DarklistDao1 {
 
     }
 
+    
+    
+    
+      public  void carregarDarkList() throws IOException, Exception {
+
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+            getStatus().forEach((var x) -> {
+
+            DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
+
+            String allowChange = "No permitido cambios";
+
+            if (x != null) {
+
+                if (x.isStatus()) {
+
+                    allowChange = "Listo para Cambio";
+
+                }
+
+                df.addRow(new Object[]{
+                    x.getId(),
+                    x.getDataAbertura(),
+                    x.getDataFechamento(),
+                    x.getComentario(),
+                    x.isStatus(),
+                    allowChange
+
+                });
+
+            }
+
+        });
+
+        new Util(tbMainViewDarkList).ajustarFormataColunasTabelaConteudo();
+
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     public static void main(String[] args) throws FileNotFoundException, IOException {
 
 //        new DarklistDao1(LocalDate.parse("2023-05-16").plusDays(1)).getStatus().forEach(x -> {

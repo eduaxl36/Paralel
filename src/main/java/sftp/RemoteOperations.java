@@ -4,19 +4,19 @@
  */
 package sftp;
 
-import br.com.kantar.pathManager.Manager;
-import com.jcraft.jsch.ChannelSftp;
+
+import Util.MainTableUtil;
+import pathManager.Manager;
 import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import static sftp.SFTPConnection.fileMap;
+import javax.swing.JTable;
+import msgs.Pbar;
+import viewClient.MenuFile;
 
 /**
  *
@@ -26,8 +26,6 @@ public class RemoteOperations {
 
     private ConfiguracoesSFTPModel ModeloConexao = null;
     private SFTPConnection Connection = null;
-    static Map<String, String> fileMap;
-    static Map<String, String> fileLog;
 
     public static final String LOCAL_FLAG = Manager.getRoot().get("caminho_local_temp_flag");
     public static final String REMOTE_FLAG = Manager.getRoot().get("caminho_ftp_flag");
@@ -103,13 +101,32 @@ public class RemoteOperations {
 
     }
     
-    public static void main(String[] args) throws Exception {
+    
+       public void uploadLogAlteracoes(JTable Tabela,String DataProducao) {
+        int resposta = JOptionPane.showConfirmDialog(null, "Desea enviar los cambios para la equipe regional?", "Confirmacion", JOptionPane.YES_OPTION);
 
-        ConfiguracoesSFTPModel sd = new ConfiguracoesSFTPModel("LATAM", 0, "regional.latam", "gDItMm7K", "sftp.kantaribopemedia.com", 22);
+        if (resposta == JOptionPane.YES_OPTION) {
+            new Thread(() -> {
+                try {
 
-        RemoteOperations rp = new RemoteOperations(sd);
-//        rp.downloadArquivoLista("20230619");
-
+                
+                    
+                    Pbar.Progresso.setVisible(true);
+                    
+                    String arquivoSalvoLog = Manager.getRoot().get("caminho_local_temp_logFile") + DataProducao.replaceAll("-", "") + "_log.csv";
+                    new MainTableUtil(Tabela).exportarConteudoParaCsv(arquivoSalvoLog);
+                    uploadLogdia(DataProducao.replaceAll("-", ""));
+                    
+                    Pbar.Progresso.setVisible(false);
+                } catch (Exception ex) {
+                    Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }).start();
+        } else if (resposta == JOptionPane.NO_OPTION) {
+            JOptionPane.showMessageDialog(null, "Voce selecionou 'Não'.");
+        }
     }
+    
+    
 
 }

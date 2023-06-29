@@ -5,8 +5,7 @@
 package dao;
 
 import Entities.Darklist;
-import Util.Util;
-import br.com.kantar.pathManager.Manager;
+import Util.MainTableUtil;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,59 +16,34 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import msgs.Pbar;
-import viewClient.DarklistManagerViewClient;
 import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
-import viewClient.MenuFile;
 
 /**
  *
  * @author Eduardo.Fernando
  */
-public class DarklistDao1 {
+public class ListDao {
 
     private LocalDate DataProducao;
     private File DarkListFile;
     private JTable Tabela;
+    private DefaultTableModel Modelo;
 
-    public DarklistDao1() {
+    public ListDao() {
 
     }
 
-    public DarklistDao1(LocalDate DataProducao, File DarkListFile, JTable Tabela) {
+    public ListDao(LocalDate DataProducao, File DarkListFile, JTable Tabela) {
         this.DataProducao = DataProducao;
         this.DarkListFile = DarkListFile;
         this.Tabela = Tabela;
+       
     }
 
-    public void uploadLogAlteracoes() {
-        int resposta = JOptionPane.showConfirmDialog(null, "Desea enviar los cambios para la equipe regional?", "Confirmacion", JOptionPane.YES_OPTION);
-
-        if (resposta == JOptionPane.YES_OPTION) {
-            new Thread(() -> {
-                try {
-
-                
-                    
-                    Pbar.Progresso.setVisible(true);
-                    String arquivoSalvoLog = Manager.getRoot().get("caminho_local_temp_logFile") + DataProducao.toString().replaceAll("-", "") + "_log.csv";
-                    new Util(Tabela).exportarConteudoParaCsv(arquivoSalvoLog);
-                    DarklistManagerViewClient.Remote.uploadLogdia(DataProducao.toString().replaceAll("-", ""));
-                    Pbar.Progresso.setVisible(false);
-                } catch (Exception ex) {
-                    Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }).start();
-        } else if (resposta == JOptionPane.NO_OPTION) {
-            JOptionPane.showMessageDialog(null, "Voce selecionou 'Não'.");
-        }
-    }
+ 
 
     public boolean verificartSeEstaEmDark(LocalDate DataAbertura, LocalDate DataFechamento) {
 
@@ -143,12 +117,10 @@ public class DarklistDao1 {
     }
 
     public void carregarDarkList() throws IOException, Exception {
-
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd");
-
+        
+        Modelo = (DefaultTableModel)Tabela.getModel();
+     
         getStatus().forEach((var x) -> {
-
-            DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
 
             String allowChange = "No permitido cambios";
 
@@ -160,7 +132,7 @@ public class DarklistDao1 {
 
                 }
 
-                df.addRow(new Object[]{
+                Modelo.addRow(new Object[]{
                     x.getId(),
                     x.getDataAbertura(),
                     x.getDataFechamento(),
@@ -174,7 +146,7 @@ public class DarklistDao1 {
 
         });
 
-        new Util(tbMainViewDarkList).ajustarFormataColunasTabelaConteudo();
+        new MainTableUtil(tbMainViewDarkList).ajustarFormataColunasTabelaConteudo();
 
     }
 

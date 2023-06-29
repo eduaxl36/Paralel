@@ -4,7 +4,7 @@
  */
 package sftp;
 
-import br.com.kantar.pathManager.Manager;
+import pathManager.Manager;
 import com.jcraft.jsch.JSchException;
 import java.io.IOException;
 import java.text.ParseException;

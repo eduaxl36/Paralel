@@ -6,11 +6,10 @@ package viewClient;
 
 import flag.CambioFlagView;
 import Util.MainTableUtil;
-import Util.Util;
-import br.com.kantar.pathManager.Manager;
+import pathManager.Manager;
 import com.formdev.flatlaf.FlatDarkLaf;
 import static controller.MenuFileController.SelectedFile;
-import dao.DarklistDao1;
+import dao.ListDao;
 import dao.LogDao;
 import flag.FlagOperations;
 import static flag.FlagOperations.Flags;
@@ -41,18 +40,16 @@ import static viewClient.ViewDarkAdd.instanciaAbertaAdicao;
  */
 public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
-   
-
     private int Incremental;
     private int FinalNumber;
 
-    private DarklistDao1 Darklist;
+    private ListDao Darklist;
 
     private DateTimeFormatter Formatador;
 
-    static boolean validador = true;
-    static boolean validador2 = true;
-    static boolean validador3 = false;
+    static boolean ValidadorNovosCambios = true;
+    static boolean NaoPermitirCambio = true;
+    static boolean ValidadorAprovacao = false;
 
     static int NumeroOriginalSelecionadoTabela;
 
@@ -78,7 +75,7 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
         Formatador = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-        UtilMainTable = new MainTableUtil();
+       
 
         Remote = new RemoteOperations(new ConfiguracoesSFTPModel("LATAM", 0, "regional.latam", "gDItMm7K", "sftp.kantaribopemedia.com", 22));
 
@@ -86,6 +83,9 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
 //        FlatLightLaf.install();
         initComponents();
+        
+        
+         UtilMainTable = new MainTableUtil(tbMainViewDarkList);
 
         anularEnterDentroFiltro();
 
@@ -126,18 +126,33 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
     public static void filtrarTabelaCriterio() {
 
-        String searchText = txt_filtro.getText();
-        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>((DefaultTableModel) tbMainViewDarkList.getModel());
-        tbMainViewDarkList.setRowSorter(sorter);
+        
+        try {
+              String searchText = txt_filtro.getText();
+        TableRowSorter<DefaultTableModel> sorter = (TableRowSorter<DefaultTableModel>) tbMainViewDarkList.getRowSorter();
 
-        // Verifica se o sorter j� est� inicializado
-        if (sorter.getSortKeys().isEmpty()) {
-            // Define uma ordem de classifica��o padr�o para evitar o erro de refer�ncia nula
-            sorter.setSortKeys(List.of(new RowSorter.SortKey(cbTipo.getSelectedIndex(), SortOrder.ASCENDING)));
+        // Verifica se o sorter não está nulo e se está inicializado
+        if (sorter == null) {
+            // Se o sorter for nulo, cria um novo e define-o como o RowSorter da tabela
+            sorter = new TableRowSorter<>((DefaultTableModel) tbMainViewDarkList.getModel());
+            tbMainViewDarkList.setRowSorter(sorter);
         }
 
-        // Define o filtro para a coluna 2 (�ndice 1)
-        sorter.setRowFilter(RowFilter.regexFilter(searchText, cbTipo.getSelectedIndex()));
+        // Verifica se o sorter já está inicializado
+        if (sorter.getSortKeys().isEmpty()) {
+            // Define uma ordem de classificação padrão para evitar o erro de referência nula
+            sorter.setSortKeys(List.of(new RowSorter.SortKey(cbTipo.getSelectedIndex(), SortOrder.ASCENDING)));
+
+            // Define o filtro para a coluna selecionada (índice baseado no ComboBox)
+            sorter.setRowFilter(RowFilter.regexFilter(searchText, cbTipo.getSelectedIndex()));
+            
+            
+            
+        }
+        } catch (Exception e) {
+        }
+        
+      
     }
 
     public static void carregarLogAlteracoes() throws IOException, Exception {
@@ -184,7 +199,7 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
         });
 
-        new Util(tbMainViewDarkList).ajustarFormataColunasTabelaConteudo();
+        new MainTableUtil(tbMainViewDarkList).ajustarFormataColunasTabelaConteudo();
 
     }
 
@@ -401,12 +416,7 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-        Darklist = new DarklistDao1(
-                LocalDate.parse(lblDtProd.getText(), Formatador),
-                null,
-                tbMainViewDarkList
-        );
-        Darklist.uploadLogAlteracoes();
+        Remote.uploadLogAlteracoes(tbMainViewDarkList, lblDtProd.getText());
 
 
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -482,7 +492,6 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
         ///RESETAR 
         FinalNumber = 0;
         Incremental = 0;
-             
 
         //
         if (SwingUtilities.isRightMouseButton(evt)) {
@@ -494,7 +503,7 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
                     LocalDate dataSelecioanda = LocalDate.parse(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 1).toString());
 
                     NumeroOriginalSelecionadoTabela
-                            = new Util().obterNumeroDaLinhaTabelaSelecionadaOriginal(domselecionado,
+                            = new MainTableUtil(tbMainViewDarkList).obterNumeroDaLinhaTabelaSelecionadaOriginal(domselecionado,
                                     dataSelecioanda,
                                     txt_filtro,
                                     Incremental,
@@ -503,13 +512,13 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
                     String Verificador = tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 5).toString();
 
-                    validador3 = Verificador.toLowerCase().matches(".*apro.*");
+                    ValidadorAprovacao = Verificador.toLowerCase().matches(".*apro.*");
 
-                    validador2 = !Verificador.equals("No permitido cambios");
+                    NaoPermitirCambio = !Verificador.equals("No permitido cambios");
 
-                    validador = Verificador.contains("Nueva Linea/Aprobacion");
+                    ValidadorNovosCambios = Verificador.contains("Nueva Linea/Aprobacion");
 
-                    UtilMainTable.mostrarMenuFlutuante(evt.getComponent(), evt.getX(), evt.getY(), AbrirCloseMode, AbrirAdicao, tbMainViewDarkList, validador3, validador, validador2);
+                    UtilMainTable.mostrarMenuFlutuante(evt.getComponent(), evt.getX(), evt.getY(), AbrirCloseMode, AbrirAdicao, tbMainViewDarkList, ValidadorAprovacao, ValidadorNovosCambios, NaoPermitirCambio);
                 } catch (IOException ex) {
                     Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -531,10 +540,20 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
     private void txt_filtroKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_filtroKeyPressed
 
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        
+        try {
+                    if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
         } else {
             filtrarTabelaCriterio();
         }
+        } catch (Exception e) {
+            
+            System.out.println("deu");
+            
+            
+        }
+        
+
 
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_filtroKeyPressed
@@ -556,21 +575,26 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
         try {
             UIManager.setLookAndFeel(new FlatDarkLaf());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        java.awt.EventQueue.invokeLater(new Runnable() {
+                   java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+              
                 try {
                     new DarklistManagerViewClient().setVisible(true);
-                } catch (IOException ex) {
-                    Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (Exception ex) {
-                    Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
+                   
                 }
+              
             }
         });
+        } catch (Exception ex) {
+           
+            JOptionPane.showMessageDialog(null, Remote);
+            
+            
+            
+        }
+
+ 
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

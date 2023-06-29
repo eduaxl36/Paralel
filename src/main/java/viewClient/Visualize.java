@@ -5,9 +5,9 @@
 package viewClient;
 
 
-import br.com.kantar.pathManager.Manager;
+import pathManager.Manager;
 import com.formdev.flatlaf.FlatLightLaf;
-import dao.DarklistDao1;
+import dao.ListDao;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -38,7 +38,7 @@ public class Visualize extends javax.swing.JFrame {
 
         String DarklistLocal = new File(CAMINHO_LOCAL_DARKLIST).toString();
 
-        new DarklistDao1(LocalDate.parse(Data, fmt).plusDays(1), new File(DarklistLocal+"/"+DarklistFile).getParentFile(),tbMainViewDarkList).getStatus().forEach(x -> {
+        new ListDao(LocalDate.parse(Data, fmt).plusDays(1), new File(DarklistLocal+"/"+DarklistFile).getParentFile(),tbMainViewDarkList).getStatus().forEach(x -> {
 
             DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
 

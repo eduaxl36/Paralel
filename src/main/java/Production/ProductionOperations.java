@@ -4,7 +4,7 @@
  */
 package Production;
 
-import br.com.kantar.pathManager.Manager;
+import pathManager.Manager;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;

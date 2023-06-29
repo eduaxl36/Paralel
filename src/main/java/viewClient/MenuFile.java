@@ -150,6 +150,7 @@ public final class MenuFile extends javax.swing.JFrame {
 
     private void tbDataLogMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbDataLogMousePressed
 
+  
        MenuFileController.acaoParaLog();
    
        this.dispose();

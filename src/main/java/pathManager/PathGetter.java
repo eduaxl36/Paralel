@@ -1,5 +1,5 @@
 
-package br.com.kantar.pathManager;
+package pathManager;
 import com.google.gson.annotations.SerializedName;
 
 public class PathGetter {

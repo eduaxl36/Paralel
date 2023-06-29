@@ -4,7 +4,7 @@
  */
 package flag;
 
-import br.com.kantar.pathManager.Manager;
+import pathManager.Manager;
 import flag.entidadeFlag;
 import java.io.File;
 import java.io.IOException;

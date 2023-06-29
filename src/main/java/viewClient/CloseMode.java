@@ -4,8 +4,8 @@
  */
 package viewClient;
 
-import Util.Util;
 
+import Util.MainTableUtil;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -253,7 +253,7 @@ public class CloseMode extends javax.swing.JFrame {
 
                     this.dispose();
                     txt_filtro.setText("");
-                    new Util(tbMainViewDarkList).ajustarFormataColunasTabelaConteudo();
+                    new MainTableUtil(tbMainViewDarkList).ajustarFormataColunasTabelaConteudo();
                     filtrarTabelaCriterio();
 
                 }

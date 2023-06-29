@@ -4,8 +4,8 @@
  */
 package controller;
 
-import br.com.kantar.pathManager.Manager;
-import dao.DarklistDao1;
+import pathManager.Manager;
+import dao.ListDao;
 import static datechooser.beans.PermanentBean.dispose;
 import java.io.File;
 import java.time.LocalDate;
@@ -71,8 +71,13 @@ public class MenuFileController {
     public static void acaoParaLog() {
 
         try {
+            
+            
             DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
             df.setNumRows(0);
+                      
+            
+            
             int row = tbDataLog.getSelectedRow();
 
             String arquivo = tbDataLog.getValueAt(row, 1).toString();
@@ -117,6 +122,7 @@ public class MenuFileController {
 
             new Thread() {
 
+                @Override
                 public void run() {
 
                     try {
@@ -133,7 +139,7 @@ public class MenuFileController {
 
                         LocalDate DataFt = LocalDate.parse(lblDtProd.getText(), formatter);
 
-                        new DarklistDao1(DataFt, SelectedFile, tbMainViewDarkList).carregarDarkList();
+                        new ListDao(DataFt, SelectedFile, tbMainViewDarkList).carregarDarkList();
 
                         Pbar.Progresso.setVisible(false);
 

@@ -5,14 +5,11 @@
 package dao;
 
 import Entities.Log;
-import Util.Util;
+import Util.MainTableUtil;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JTable;
@@ -44,17 +41,6 @@ public class LogDao {
         this.LogFile = LogFile;
         this.Tabela = Tabela;
         Modelo = (DefaultTableModel) Tabela.getModel();
-    }
-    
-    
-    public void downloadArquivoLog(){
-    
-    
-    
-    
-    
-    
-    
     }
     
     
@@ -98,7 +84,7 @@ public class LogDao {
 
         });
 
-        new Util(Tabela).ajustarFormataColunasTabelaConteudo();
+        new MainTableUtil(Tabela).ajustarFormataColunasTabelaConteudo();
     
     
     }
@@ -171,19 +157,5 @@ public class LogDao {
 
   
 
-    public static void main(String[] args) throws FileNotFoundException, IOException, Exception {
-
-        LogDao lgdao = new LogDao(LocalDate.now(), new File("C:\\teste\\20230606_log.csv"));
-
-     
-        lgdao.Logs().forEach(System.out::println);
-        
-        
-//        new DarklistDao1(LocalDate.parse("2023-05-16").plusDays(1)).getStatus().forEach(x -> {
-//
-//            System.out.println(x);
-//
-//        });
-    }
 
 }

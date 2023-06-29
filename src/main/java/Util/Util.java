@@ -68,7 +68,7 @@ public class Util {
         this.numeroFinal = NumeroFinal;
         this.numeroIncremental = NumeroIncremental;
         
-        new DarklistDao1(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), ArquivoSelecionado).getStatus().forEach((var x) -> {
+        new DarklistDao1(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), ArquivoSelecionado,Tabela).getStatus().forEach((var x) -> {
 
             if (x != null && x.getId() != 0) {
 
@@ -134,6 +134,9 @@ public class Util {
     }
 
     public void ajustarFormataColunasTabelaConteudo() {
+
+        
+        if(Tabela.getRowCount()>-1){
 
         class RenderizadorInternoCentralizador extends DefaultTableCellRenderer {
 
@@ -201,5 +204,9 @@ public class Util {
             UIManager.put("Table.selectionBackground", new Color(0, 120, 215));
             UIManager.put("Table.selectionForeground", Color.WHITE);
         }
+        
+        }
+        
+    
     }
 }

@@ -4,7 +4,7 @@
  */
 package flag;
 
-import static br.com.kantar.sftp.FlagOperations.Flags;
+import static flag.FlagOperations.Flags;
 import javax.swing.table.DefaultTableModel;
 
 

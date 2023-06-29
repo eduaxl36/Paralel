@@ -6,6 +6,7 @@ package dao;
 
 import Entities.Darklist;
 import Util.Util;
+import br.com.kantar.pathManager.Manager;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,11 +17,16 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-import static viewClient.DarklistManagerViewClient.lblDtProd;
+import msgs.Pbar;
+import viewClient.DarklistManagerViewClient;
 import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
+import viewClient.MenuFile;
 
 /**
  *
@@ -30,24 +36,47 @@ public class DarklistDao1 {
 
     private LocalDate DataProducao;
     private File DarkListFile;
+    private JTable Tabela;
 
     public DarklistDao1() {
 
     }
 
-    public DarklistDao1(LocalDate DataProducao, File DarkListFile) {
+    public DarklistDao1(LocalDate DataProducao, File DarkListFile, JTable Tabela) {
         this.DataProducao = DataProducao;
         this.DarkListFile = DarkListFile;
+        this.Tabela = Tabela;
     }
 
-    public boolean verificartSeEstaEmDark(LocalDate DataAbertura,LocalDate DataFechamento) {
+    public void uploadLogAlteracoes() {
+        int resposta = JOptionPane.showConfirmDialog(null, "Desea enviar los cambios para la equipe regional?", "Confirmacion", JOptionPane.YES_OPTION);
 
+        if (resposta == JOptionPane.YES_OPTION) {
+            new Thread(() -> {
+                try {
 
-        boolean MaiorOUMaiorAbertura = this.DataProducao.isEqual(DataAbertura)||this.DataProducao.isAfter(DataAbertura);
-        boolean MenorQueFechamentoOUIGUAL = this.DataProducao.isEqual(DataFechamento)||this.DataProducao.isBefore(DataFechamento);
-          
-        
-        return (MaiorOUMaiorAbertura&&MenorQueFechamentoOUIGUAL);
+                
+                    
+                    Pbar.Progresso.setVisible(true);
+                    String arquivoSalvoLog = Manager.getRoot().get("caminho_local_temp_logFile") + DataProducao.toString().replaceAll("-", "") + "_log.csv";
+                    new Util(Tabela).exportarConteudoParaCsv(arquivoSalvoLog);
+                    DarklistManagerViewClient.Remote.uploadLogdia(DataProducao.toString().replaceAll("-", ""));
+                    Pbar.Progresso.setVisible(false);
+                } catch (Exception ex) {
+                    Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }).start();
+        } else if (resposta == JOptionPane.NO_OPTION) {
+            JOptionPane.showMessageDialog(null, "Voce selecionou 'Não'.");
+        }
+    }
+
+    public boolean verificartSeEstaEmDark(LocalDate DataAbertura, LocalDate DataFechamento) {
+
+        boolean MaiorOUMaiorAbertura = this.DataProducao.isEqual(DataAbertura) || this.DataProducao.isAfter(DataAbertura);
+        boolean MenorQueFechamentoOUIGUAL = this.DataProducao.isEqual(DataFechamento) || this.DataProducao.isBefore(DataFechamento);
+
+        return (MaiorOUMaiorAbertura && MenorQueFechamentoOUIGUAL);
     }
 
     public Darklist retornaObjetoDark(String Raw) {
@@ -60,11 +89,10 @@ public class DarklistDao1 {
             String Abertura = RawLines[3].trim();
             String Fechamento = RawLines[4].trim().replaceAll("-1", "20501231");
             String Observacao = RawLines[7].trim();
-            
-            
+
             byte[] bytes = Observacao.getBytes(Charset.forName("ISO-8859-1"));
-           String observacaoANSI = new String(bytes, Charset.forName("UTF-8"));
-            
+            String observacaoANSI = new String(bytes, Charset.forName("UTF-8"));
+
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
             LocalDate AberturaAsLc = LocalDate.parse(Abertura, formatter);
             LocalDate FechamentoAsLc = LocalDate.parse(Fechamento, formatter);
@@ -74,7 +102,7 @@ public class DarklistDao1 {
                     AberturaAsLc,
                     FechamentoAsLc,
                     observacaoANSI,
-                    verificartSeEstaEmDark(AberturaAsLc,FechamentoAsLc)
+                    verificartSeEstaEmDark(AberturaAsLc, FechamentoAsLc)
             );
 
         }
@@ -114,14 +142,11 @@ public class DarklistDao1 {
 
     }
 
-    
-    
-    
-      public  void carregarDarkList() throws IOException, Exception {
+    public void carregarDarkList() throws IOException, Exception {
 
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-            getStatus().forEach((var x) -> {
+        getStatus().forEach((var x) -> {
 
             DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
 
@@ -152,18 +177,7 @@ public class DarklistDao1 {
         new Util(tbMainViewDarkList).ajustarFormataColunasTabelaConteudo();
 
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     public static void main(String[] args) throws FileNotFoundException, IOException {
 
 //        new DarklistDao1(LocalDate.parse("2023-05-16").plusDays(1)).getStatus().forEach(x -> {

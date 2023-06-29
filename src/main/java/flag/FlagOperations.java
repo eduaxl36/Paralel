@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package br.com.kantar.sftp;
+package flag;
 
 import br.com.kantar.pathManager.Manager;
 import flag.entidadeFlag;
@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
+import viewClient.DarklistManagerViewClient;
 
 import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
 
@@ -110,7 +111,7 @@ public class FlagOperations {
     public void uploadFlag() throws Exception{
     
     
-    new SFTPOperations().uploadFlag();
+    DarklistManagerViewClient.Remote.uploadFlag();
     
     
     }

@@ -38,7 +38,7 @@ public class Visualize extends javax.swing.JFrame {
 
         String DarklistLocal = new File(CAMINHO_LOCAL_DARKLIST).toString();
 
-        new DarklistDao1(LocalDate.parse(Data, fmt).plusDays(1), new File(DarklistLocal+"/"+DarklistFile).getParentFile()).getStatus().forEach(x -> {
+        new DarklistDao1(LocalDate.parse(Data, fmt).plusDays(1), new File(DarklistLocal+"/"+DarklistFile).getParentFile(),tbMainViewDarkList).getStatus().forEach(x -> {
 
             DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
 

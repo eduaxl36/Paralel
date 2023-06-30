@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
+import static sftp.Inicializacao.Remote;
 import viewClient.DarklistManagerViewClient;
 
 import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
@@ -111,7 +112,7 @@ public class FlagOperations {
     public void uploadFlag() throws Exception{
     
     
-    DarklistManagerViewClient.Remote.uploadFlag();
+    Remote.uploadFlag();
     
     
     }

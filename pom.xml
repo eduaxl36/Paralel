@@ -122,4 +122,5 @@
                   <type>jar</type>
             </dependency>
     </dependencies>
+    <name>ListManager</name>
 </project>

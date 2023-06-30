@@ -7,6 +7,8 @@ package controller;
 import pathManager.Manager;
 import dao.ListDao;
 import static datechooser.beans.PermanentBean.dispose;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -17,10 +19,11 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import msgs.Pbar;
+import static sftp.Inicializacao.Remote;
 import viewClient.DarklistManagerViewClient;
-import static viewClient.DarklistManagerViewClient.carregarLogAlteracoes;
 import static viewClient.DarklistManagerViewClient.lblDtProd;
 import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
+import static viewClient.DarklistManagerViewClient.txt_filtro;
 import viewClient.MenuFile;
 import static viewClient.MenuFile.TableDatasDark;
 import static viewClient.MenuFile.tbDataLog;
@@ -33,11 +36,27 @@ import static viewClient.Visualize.loadDarkListEditMode;
  */
 public class MenuFileController {
 
-  
+    private MainViewController MainController;
+
     public static File SelectedFile;
 
     public MenuFileController() throws Exception {
 
+        MainController = new MainViewController();
+
+    }
+
+    public void anularEnterDentroFiltro() {
+
+        txt_filtro.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    e.consume();
+
+                }
+            }
+        });
 
     }
 
@@ -68,16 +87,13 @@ public class MenuFileController {
 
     }
 
-    public static void acaoParaLog() {
+    public void acaoParaLog() {
 
         try {
-            
-            
+
             DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
             df.setNumRows(0);
-                      
-            
-            
+
             int row = tbDataLog.getSelectedRow();
 
             String arquivo = tbDataLog.getValueAt(row, 1).toString();
@@ -92,7 +108,7 @@ public class MenuFileController {
 
                         SelectedFile = new File(Manager.getRoot().get("caminho_local_temp_logFile") + tbDataLog.getValueAt(tbDataLog.getSelectedRow(), 1));
 
-                        carregarLogAlteracoes();
+                        MainController.carregarLogAlteracoes();
 
                         DarklistManagerViewClient.lblmode.setText("Log View");
 
@@ -126,12 +142,10 @@ public class MenuFileController {
                 public void run() {
 
                     try {
-                       
-                      
 
                         Pbar.Progresso.setVisible(true);
 
-                          DarklistManagerViewClient.Remote.downloadArquivoLst(TableDatasDark.getValueAt(TableDatasDark.getSelectedRow(), 1).toString());
+                        Remote.downloadArquivoLst(TableDatasDark.getValueAt(TableDatasDark.getSelectedRow(), 1).toString());
 
                         SelectedFile = new File(Manager.getRoot().get("caminho_local_temp_darkFile"));
 
@@ -181,7 +195,7 @@ public class MenuFileController {
 
     public static void tableListListener() throws Exception {
 
-        Map<String, String> MapDark =   DarklistManagerViewClient.Remote.obterListaArquivosDataArquivo();
+        Map<String, String> MapDark = Remote.obterListaArquivosDataArquivo();
 
         SwingUtilities.invokeLater(() -> {
 
@@ -195,7 +209,7 @@ public class MenuFileController {
 
     public static void tableLogListener() throws Exception {
 
-        Map<String, String> MapLog =   DarklistManagerViewClient.Remote.obterListaArquivosLogDataArquivo();
+        Map<String, String> MapLog = Remote.obterListaArquivosLogDataArquivo();
 
         SwingUtilities.invokeLater(() -> {
 

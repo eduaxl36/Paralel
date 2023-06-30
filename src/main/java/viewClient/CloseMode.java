@@ -251,10 +251,11 @@ public class CloseMode extends javax.swing.JFrame {
             try {
                 if (fecharLinha()) {
 
-                    this.dispose();
+                   
                     txt_filtro.setText("");
                     new MainTableUtil(tbMainViewDarkList).ajustarFormataColunasTabelaConteudo();
                     filtrarTabelaCriterio();
+                    this.dispose();
 
                 }
 

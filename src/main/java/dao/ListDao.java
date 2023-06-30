@@ -119,6 +119,7 @@ public class ListDao {
     public void carregarDarkList() throws IOException, Exception {
         
         Modelo = (DefaultTableModel)Tabela.getModel();
+        Modelo.setNumRows(0);
      
         getStatus().forEach((var x) -> {
 

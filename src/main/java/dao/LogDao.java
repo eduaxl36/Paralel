@@ -34,6 +34,8 @@ public class LogDao {
     public LogDao(LocalDate DataProducao, File DarkListFile) {
         this.DataProducao = DataProducao;
         this.LogFile = DarkListFile;
+        
+        Modelo = (DefaultTableModel) Tabela.getModel();
     }
 
     public LogDao(LocalDate DataProducao, File LogFile, JTable Tabela) {
@@ -47,6 +49,8 @@ public class LogDao {
        
     public void preencherTabela() throws Exception{
 
+        
+        Modelo.setNumRows(0);
         
         Logs().forEach(x -> {
 

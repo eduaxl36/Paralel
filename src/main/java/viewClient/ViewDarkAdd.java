@@ -6,6 +6,7 @@ package viewClient;
 
 
 import com.formdev.flatlaf.FlatLightLaf;
+import controller.ViewDarkController;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.table.DefaultTableModel;
@@ -23,7 +24,8 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import static viewClient.DarklistManagerViewClient.lblDtProd;
 import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
-import static viewClient.DarklistManagerViewClient.validarSeProucaoJaFoi;
+
+
 
 /**
  *
@@ -36,6 +38,7 @@ public class ViewDarkAdd extends javax.swing.JFrame {
      */
     
     JDialog modalDialo;
+    ViewDarkController ControllerAdd;
     
     public static boolean instanciaAbertaAdicao = false;
     
@@ -48,6 +51,7 @@ public class ViewDarkAdd extends javax.swing.JFrame {
         lblUserName.setText(username);
         JDialog modalDialog = new JDialog();
         modalDialog.setModal(true);
+        ControllerAdd = new ViewDarkController();
         
         
 
@@ -220,7 +224,7 @@ public class ViewDarkAdd extends javax.swing.JFrame {
         return ChronoUnit.DAYS.between(dateTime1, dateTime2);
     }
 
-    public static boolean addLineOneTable() throws ParseException {
+    public  boolean addLineOneTable() throws ParseException {
 
         DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
 
@@ -256,7 +260,9 @@ public class ViewDarkAdd extends javax.swing.JFrame {
 
                 DateTimeFormatter dfw = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-                if (validarSeProucaoJaFoi(Long.parseLong(Txt_HouseHold.getText())) == false) {
+                boolean ValidadorExistencia = ControllerAdd.validarSeProucaoJaFoi(Long.parseLong(Txt_HouseHold.getText()));
+                
+                if (ValidadorExistencia == false) {
 
                     df.addRow(new Object[]{
                         Txt_HouseHold.getText(),
@@ -298,9 +304,12 @@ public class ViewDarkAdd extends javax.swing.JFrame {
 
             if (!addLineOneTable()) {
 
+                
+                
             } else {
 
                 this.setVisible(false);
+                instanciaAbertaAdicao=false;
 
             }
 

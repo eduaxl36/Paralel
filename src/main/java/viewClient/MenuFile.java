@@ -4,18 +4,12 @@
  */
 package viewClient;
 
+import controller.MainViewController;
 import controller.MenuFileController;
-import static controller.MenuFileController.acaoParaLog;
 
-import java.io.File;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.SwingUtilities;
-import javax.swing.table.DefaultTableModel;
-import sftp.ConfiguracoesSFTPModel;
-import sftp.LogOperations;
-import sftp.RemoteOperations;
+
 
 /**
  *
@@ -23,6 +17,8 @@ import sftp.RemoteOperations;
  */
 public final class MenuFile extends javax.swing.JFrame {
 
+    private MainViewController MainController;
+    
  
     /**
      * Creates new form DarklistListFiles
@@ -33,6 +29,7 @@ public final class MenuFile extends javax.swing.JFrame {
         
         MenuFileController.tableListListener();
         MenuFileController.tableLogListener();
+        MainController = new MainViewController();
         
 
     }
@@ -151,10 +148,16 @@ public final class MenuFile extends javax.swing.JFrame {
     private void tbDataLogMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbDataLogMousePressed
 
   
-       MenuFileController.acaoParaLog();
-   
-       this.dispose();
-        // TODO add your handling code here:
+        try {
+            
+            
+            MainController.carregarLogAlteracoes();
+            
+            this.dispose();
+            // TODO add your handling code here:
+        } catch (Exception ex) {
+            Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_tbDataLogMousePressed
 
     private void TableDatasDarkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableDatasDarkMouseClicked

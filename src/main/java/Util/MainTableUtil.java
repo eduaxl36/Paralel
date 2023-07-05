@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -28,7 +29,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import static viewClient.DarklistManagerViewClient.lblDtProd;
-import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
 
 /**
  *
@@ -167,6 +167,8 @@ public final class MainTableUtil {
         
         this.numeroFinal = NumeroFinal;
         this.numeroIncremental = NumeroIncremental;
+        
+       
         
         new ListDao(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), ArquivoSelecionado,Tabela).getStatus().forEach((var x) -> {
 

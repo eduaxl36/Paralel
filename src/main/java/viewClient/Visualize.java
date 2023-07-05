@@ -36,6 +36,8 @@ public class Visualize extends javax.swing.JFrame {
       
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd");
 
+        
+        
         String DarklistLocal = new File(CAMINHO_LOCAL_DARKLIST).toString();
 
         new ListDao(LocalDate.parse(Data, fmt).plusDays(1), new File(DarklistLocal+"/"+DarklistFile).getParentFile(),tbMainViewDarkList).getStatus().forEach(x -> {

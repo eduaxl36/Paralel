@@ -4,8 +4,10 @@
  */
 package viewClient;
 
-
 import Util.MainTableUtil;
+import controller.CloseModeController;
+import controller.MainViewController;
+import static controller.MainViewController.NumeroOriginalSelecionadoTabela;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -24,8 +26,6 @@ import org.apache.commons.lang.time.DateUtils;
 import static viewClient.DarklistManagerViewClient.lblDtProd;
 import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
 import static viewClient.DarklistManagerViewClient.txt_filtro;
-import static viewClient.DarklistManagerViewClient.NumeroOriginalSelecionadoTabela;
-import static viewClient.DarklistManagerViewClient.filtrarTabelaCriterio;
 
 /**
  *
@@ -33,39 +33,13 @@ import static viewClient.DarklistManagerViewClient.filtrarTabelaCriterio;
  */
 public class CloseMode extends javax.swing.JFrame {
 
-    static String oldValueComment;
+  
+    CloseModeController Controller;
+
+    private MainViewController MainController;
     public static boolean instanciaMudancaAdicao = false;
 
-    public static boolean identificarAlteracaoNoComentario(String NovoValor) {
 
-        return oldValueComment.equals(NovoValor);
-
-    }
-
-    public static String definidorDeAcoes(boolean tipo) {
-
-        boolean identificarAlteracaoNoComentario = identificarAlteracaoNoComentario(txt_Comment.getText());
-        String val = "";
-
-        if (tipo == false) {
-
-            val = "Hogar en Produccion";
-
-        } else {
-
-            val = "Cambio en fecha";
-
-        }
-
-        if (identificarAlteracaoNoComentario == false) {
-
-            val += "/Cambio en Descritivo";
-
-        }
-
-        return val;
-
-    }
 
     public static long calcularDiferencaEmMinutos(LocalDate data1, LocalDate data2) {
         LocalDateTime dateTime1 = LocalDateTime.of(data1, LocalTime.MIN);
@@ -77,25 +51,15 @@ public class CloseMode extends javax.swing.JFrame {
     /**
      * Creates new form CloseMode
      */
-    public CloseMode() {
+    public CloseMode() throws Exception {
         initComponents();
 
-        ImageIcon img = new ImageIcon(getClass().getResource("/img/chave2.png"));
+        Controller = new CloseModeController();
 
-        this.setIconImage(img.getImage());
-        this.setTitle("      Cambiar fecha cerramiento");
-        LocalDate datafn = LocalDate.parse(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 2).toString());
+        MainController = new MainViewController();
+        
+        Controller.inicializacoes();
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(java.util.Date.from(datafn.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-
-        dateChooserCombo.setSelectedDate(calendar);
-
-        txt_Comment.setText("" + tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 3));
-
-        String username = System.getProperty("user.name");
-        lblUserName.setText(username);
-        oldValueComment = new String(txt_Comment.getText());
 
     }
 
@@ -231,105 +195,28 @@ public class CloseMode extends javax.swing.JFrame {
     pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public static boolean verificarFechamentoInferiorAbertura() throws ParseException {
-
-        LocalDate dataInicio = LocalDate.parse(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 1).toString());
-
-        LocalDate dataf = DateUtils.toCalendar(dateChooserCombo.getSelectedDate().getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-        return dataf.isBefore(dataInicio);
-
-    }
+  
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-        int resposta = JOptionPane.showConfirmDialog(null, "Desea realmente cambiar la fecha de cerramiento?",
-                "Confirmacion",
-                JOptionPane.YES_OPTION);
-
-        if (resposta == JOptionPane.YES_OPTION) {
-
-            try {
-                if (fecharLinha()) {
-
-                   
-                    txt_filtro.setText("");
-                    new MainTableUtil(tbMainViewDarkList).ajustarFormataColunasTabelaConteudo();
-                    filtrarTabelaCriterio();
-                    this.dispose();
-
-                }
-
-            } catch (ParseException ex) {
-                Logger.getLogger(CloseMode.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        } else if (resposta == JOptionPane.NO_OPTION) {
-
-            JOptionPane.showMessageDialog(null, "Você selecionou 'Não'.");
-
-        }
-
+       
+        Controller.cambiar();
+        this.dispose();
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
 
-
-        instanciaMudancaAdicao=false;
+        instanciaMudancaAdicao = false;
 
         // TODO add your handling code here:
     }//GEN-LAST:event_formWindowClosed
 
-    public static String tratarComentario(String Comment) {
-
-        String ValTemp = Comment.replaceAll("\"", "");
-
-        return "\"" + ValTemp + "\"";
-
-    }
+  
 
     /**
-     * @param args the command line arguments
+     * @return @throws java.text.ParseException
      */
-    public static boolean fecharLinha() throws ParseException {
-        txt_filtro.setText("");
-
-        LocalDate dataInicio = LocalDate.parse(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 1).toString());
-        Date RawProductionDate = new SimpleDateFormat("yyyyMMdd").parse(lblDtProd.getText());
-        LocalDate ProducionDate = RawProductionDate.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-
-        String username = System.getProperty("user.name");
-
-        LocalDate dataf = DateUtils.toCalendar(dateChooserCombo.getSelectedDate().getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-
-        boolean MaiorOUMaiorAbertura = ProducionDate.isEqual(dataInicio) || ProducionDate.isAfter(dataInicio);
-        boolean MenorQueFechamentoOUIGUAL = ProducionDate.isEqual(dataf) || ProducionDate.isBefore(dataf);
-
-        boolean validator = (MaiorOUMaiorAbertura && MenorQueFechamentoOUIGUAL);
-
-        String status = definidorDeAcoes(validator);
-
-        DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
-
-        if (!verificarFechamentoInferiorAbertura()) {
-            df.setValueAt(dataf.toString(), NumeroOriginalSelecionadoTabela, 2);
-            df.setValueAt(validator, NumeroOriginalSelecionadoTabela, 4);
-            df.setValueAt("En Aprobacion", NumeroOriginalSelecionadoTabela, 5);
-            df.setValueAt(username, NumeroOriginalSelecionadoTabela, 6);
-            df.setValueAt(tratarComentario(txt_Comment.getText()), NumeroOriginalSelecionadoTabela, 3);
-            df.setValueAt(calcularDiferencaEmMinutos(ProducionDate, dataf), NumeroOriginalSelecionadoTabela, 7);
-            df.setValueAt(status, NumeroOriginalSelecionadoTabela, 8);
-
-            return true;
-        } else {
-            JOptionPane.showMessageDialog(null, "No se puede cerrar con una fecha inferior al del inicio!", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-
-        return false;
-    }
-
+ 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -357,7 +244,11 @@ public class CloseMode extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            new CloseMode().setVisible(true);
+            try {
+                new CloseMode().setVisible(true);
+            } catch (Exception ex) {
+                Logger.getLogger(CloseMode.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
     }
 

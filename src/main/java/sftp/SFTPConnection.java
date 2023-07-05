@@ -149,7 +149,7 @@ public class SFTPConnection extends FTPService {
 
         // Listar os arquivos no diretório remoto
         Vector<ChannelSftp.LsEntry> files = this.Canal.ls("/IMI/GerenciadorCambios/Panama/def/dkl/log/");
- // Criar o mapa de arquivos
+
   
         fileLog = new HashMap<>();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -196,6 +196,7 @@ public class SFTPConnection extends FTPService {
 
                 timestamp = entry.getAttrs().getMTime() * 1000L;
 
+                
                 Date DarkListDate = new SimpleDateFormat("yyyyMMdd").parse(fileName.substring(0, 8));
 
                 fileMap.put(new SimpleDateFormat("yyyyMMdd").format(DarkListDate), fileName);

@@ -60,7 +60,7 @@ public class MenuFileController {
 
     }
 
-    public static void acaoParaDarkRetroativo() {
+    public static void acaoParaDarkRetroativo() throws Exception {
 
         int row = TableDatasDark.getSelectedRow();
 
@@ -68,6 +68,9 @@ public class MenuFileController {
         String arquivo = TableDatasDark.getValueAt(row, 1).toString();
 
         DarklistManagerViewClient.lblmode.setText("Darklist");
+        
+       Remote.downloadArquivoLst(TableDatasDark.getValueAt(TableDatasDark.getSelectedRow(), 1).toString());
+
 
         int resposta = JOptionPane.showConfirmDialog(null, "Para el historico del dark, esta disponible solo para visualizacion!, quiere abrir ?",
                 "Confirmacion",
@@ -113,7 +116,7 @@ public class MenuFileController {
                         DarklistManagerViewClient.lblmode.setText("Log View");
 
                         DarklistManagerViewClient.lblDtProd.setText(arquivo.substring(0, 8));
-
+                        
                         Pbar.Progresso.setVisible(false);
 
                     } catch (Exception ex) {
@@ -173,7 +176,7 @@ public class MenuFileController {
 
     }
 
-    public static void inpecaoEventoCliqueList() {
+    public static void inpecaoEventoCliqueList() throws Exception {
 
         int row = TableDatasDark.getSelectedRow();
         String data = TableDatasDark.getValueAt(row, 0).toString();

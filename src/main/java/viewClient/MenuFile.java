@@ -30,6 +30,7 @@ public final class MenuFile extends javax.swing.JFrame {
         MenuFileController.tableListListener();
         MenuFileController.tableLogListener();
         MainController = new MainViewController();
+         
         
 
     }
@@ -150,7 +151,7 @@ public final class MenuFile extends javax.swing.JFrame {
   
         try {
             
-            
+              
             MainController.carregarLogAlteracoes();
             
             this.dispose();
@@ -163,7 +164,7 @@ public final class MenuFile extends javax.swing.JFrame {
     private void TableDatasDarkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableDatasDarkMouseClicked
 
         MenuFileController.inpecaoEventoCliqueList();
-        
+        DarklistManagerViewClient.btnView.setEnabled(true);
         this.dispose();
 
         // TODO add your handling code here:

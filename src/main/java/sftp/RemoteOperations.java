@@ -65,7 +65,17 @@ public class RemoteOperations {
         Connection.uploadArquivo(LOCAL_FLAG, REMOTE_FLAG);
 
     }
+    public void uploadDiaProducao() throws Exception {
 
+        Connection.uploadArquivo(PRODUCAO_DIA_LOCAL , PRODUCAO_DIA_REMOTO);
+
+    }
+   public void uploadUltimoDiaLST(String data) throws Exception {
+    
+       
+        Connection.uploadArquivo(ARQUIVO_DARKLIST_LOCAL, ARQUIVO_DARKLIST_REMOTO+"spdark.lst".replaceAll("spdark.lst", data+"_spdark.lst"));
+
+    }
     public void uploadLogdia(String data) throws Exception {
 
         Connection.uploadArquivo(LOCAL_LOG + "/" + data + "_log.csv", REMOTE_LOG + "/" + data + "_log.csv");
@@ -86,6 +96,7 @@ public class RemoteOperations {
 
     public void downloadArquivoLst(String DarklistFile) throws Exception {
 
+ 
         Connection.downloadArquivo(ARQUIVO_DARKLIST_REMOTO + DarklistFile, ARQUIVO_DARKLIST_LOCAL_TEMP);
 
     }

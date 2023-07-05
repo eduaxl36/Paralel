@@ -2,6 +2,7 @@ D:\environment\temp\EntregasOficiaisConfiguracao\PARALELO_TAKE_DOWN\Paralel\src\
 D:\environment\temp\EntregasOficiaisConfiguracao\PARALELO_TAKE_DOWN\Paralel\src\main\java\Entities\Darklist.java
 D:\environment\temp\EntregasOficiaisConfiguracao\PARALELO_TAKE_DOWN\Paralel\src\main\java\dao\LogDao.java
 D:\environment\temp\EntregasOficiaisConfiguracao\PARALELO_TAKE_DOWN\Paralel\src\main\java\exceptions\DomicilioNaoEncontrado.java
+D:\environment\temp\EntregasOficiaisConfiguracao\PARALELO_TAKE_DOWN\Paralel\src\main\java\controller\ViewDarkController.java
 D:\environment\temp\EntregasOficiaisConfiguracao\PARALELO_TAKE_DOWN\Paralel\src\main\java\viewClient\ViewDarkAdd.java
 D:\environment\temp\EntregasOficiaisConfiguracao\PARALELO_TAKE_DOWN\Paralel\src\main\java\flag\FlagOperations.java
 D:\environment\temp\EntregasOficiaisConfiguracao\PARALELO_TAKE_DOWN\Paralel\src\main\java\controller\MenuFileController.java
@@ -32,5 +33,4 @@ D:\environment\temp\EntregasOficiaisConfiguracao\PARALELO_TAKE_DOWN\Paralel\src\
 D:\environment\temp\EntregasOficiaisConfiguracao\PARALELO_TAKE_DOWN\Paralel\src\main\java\flag\CambioFlagView.java
 D:\environment\temp\EntregasOficiaisConfiguracao\PARALELO_TAKE_DOWN\Paralel\src\main\java\viewClient\MenuFile.java
 D:\environment\temp\EntregasOficiaisConfiguracao\PARALELO_TAKE_DOWN\Paralel\src\main\java\viewClient\Visualize.java
-D:\environment\temp\EntregasOficiaisConfiguracao\PARALELO_TAKE_DOWN\Paralel\src\main\java\viewClient\DarklistManagerViewClient1.java
 D:\environment\temp\EntregasOficiaisConfiguracao\PARALELO_TAKE_DOWN\Paralel\src\main\java\viewClient\FlagCreator.java

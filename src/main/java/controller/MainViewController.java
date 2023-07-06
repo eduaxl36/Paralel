@@ -4,6 +4,7 @@
  */
 package controller;
 
+import Production.ProductionOperations;
 import Util.MainTableUtil;
 import dao.ListDao;
 import dao.LogDao;
@@ -173,7 +174,7 @@ public final class MainViewController {
 
         anularEnterDentroFiltro();
 
-        Remote.downloadNumeralDia();
+        new ProductionOperations().downloadUltimoProducaoLiteral();
 
         lblDtProd.setText(FileUtils.readFileToString(new File(PATH_LOG_DIARIO)));
 

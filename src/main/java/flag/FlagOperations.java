@@ -4,8 +4,6 @@
  */
 package flag;
 
-import pathManager.Manager;
-import flag.entidadeFlag;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -16,8 +14,8 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
+import pathManager.Roots;
 import static sftp.Inicializacao.Remote;
-import viewClient.DarklistManagerViewClient;
 
 import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
 
@@ -29,7 +27,7 @@ import viewClient.FlagCreator;
  */
 public class FlagOperations {
 
-    public static final String CAMINHO_FLAG = Manager.getRoot().get("caminho_local_temp_flag");
+ 
 
     public static Set<entidadeFlag> Flags = new LinkedHashSet<>();
 
@@ -73,7 +71,7 @@ public class FlagOperations {
     public  void gerarFlag(String Dia) throws IOException {
 
         Set<entidadeFlag> flag = obterListaDeFlags(Dia);
-        new File(CAMINHO_FLAG).delete();
+        new File(Roots.ARQUIVO_TEMP_FLAG.getCaminho()).delete();
         ArrayList<entidadeFlag> list = new ArrayList<>(flag);
         final String mensagem = String.format("""
                                               Solicitacion para el cambio en Darklist
@@ -82,13 +80,13 @@ public class FlagOperations {
                                               Fecha del Darklist : %s
                                               """, list.get(0).getAutor(), Dia);
 
-        FileUtils.write(new File(CAMINHO_FLAG), mensagem, StandardCharsets.UTF_8, true);
+        FileUtils.write(new File(Roots.ARQUIVO_TEMP_FLAG.getCaminho()), mensagem, StandardCharsets.UTF_8, true);
 
         flag.forEach(x -> {
 
             try {
 
-                FileUtils.write(new File(CAMINHO_FLAG),
+                FileUtils.write(new File(Roots.ARQUIVO_TEMP_FLAG.getCaminho()),
                         """
                         
                         Hogar: """ + x.getId() + "\n"

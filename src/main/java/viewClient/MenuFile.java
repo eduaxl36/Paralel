@@ -163,11 +163,15 @@ public final class MenuFile extends javax.swing.JFrame {
 
     private void TableDatasDarkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableDatasDarkMouseClicked
 
-        MenuFileController.inpecaoEventoCliqueList();
-        DarklistManagerViewClient.btnView.setEnabled(true);
-        this.dispose();
-
-        // TODO add your handling code here:
+        try {
+            MenuFileController.inpecaoEventoCliqueList();
+            DarklistManagerViewClient.btnView.setEnabled(true);
+            this.dispose();
+            
+            // TODO add your handling code here:
+        } catch (Exception ex) {
+            Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_TableDatasDarkMouseClicked
 
     /**

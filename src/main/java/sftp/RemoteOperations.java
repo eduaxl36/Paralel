@@ -4,7 +4,6 @@
  */
 package sftp;
 
-
 import Util.MainTableUtil;
 import pathManager.Manager;
 import com.jcraft.jsch.JSchException;
@@ -16,6 +15,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import msgs.Pbar;
+import pathManager.Roots;
 import viewClient.MenuFile;
 
 /**
@@ -27,21 +27,6 @@ public class RemoteOperations {
     private ConfiguracoesSFTPModel ModeloConexao = null;
     private SFTPConnection Connection = null;
 
-    public static final String LOCAL_FLAG = Manager.getRoot().get("caminho_local_temp_flag");
-    public static final String REMOTE_FLAG = Manager.getRoot().get("caminho_ftp_flag");
-
-    public static final String LOCAL_LOG = Manager.getRoot().get("caminho_local_temp_logFile");
-    public static final String REMOTE_LOG = Manager.getRoot().get("caminho_ftp_log");
-
-    public static final String PRODUCAO_DIA_LOCAL = Manager.getRoot().get("caminho_local_temp_producao_dia");
-    public static final String PRODUCAO_DIA_REMOTO = Manager.getRoot().get("caminho_ftp_producao_dia_completo_arquivo");
-    public static final String LISTA_DARKLSIT = Manager.getRoot().get("caminho_ftp_darklist");
-
-    public static final String ARQUIVO_DARKLIST_REMOTO = Manager.getRoot().get("caminho_ftp_darklist");
-    public static final String ARQUIVO_DARKLIST_LOCAL = Manager.getRoot().get("caminho_oficial_temp_darkFile_servidor");
-    public static final String ARQUIVO_DARKLIST_LOCAL_TEMP = Manager.getRoot().get("caminho_local_temp_darkFile");
-    private static String LISTA_LOG= Manager.getRoot().get("caminho_ftp_log");
-    
     public RemoteOperations(ConfiguracoesSFTPModel ModeloConexao) throws JSchException, InterruptedException {
 
         this.ModeloConexao = ModeloConexao;
@@ -51,83 +36,37 @@ public class RemoteOperations {
         Connection.Conexao();
     }
 
-    public RemoteOperations() {
-    }
-
-    public void downloadFlag() throws Exception {
-
-        Connection.downloadArquivo(LOCAL_FLAG, REMOTE_FLAG);
-
-    }
-
-    public void uploadFlag() throws Exception {
-
-        Connection.uploadArquivo(LOCAL_FLAG, REMOTE_FLAG);
-
-    }
-    public void uploadDiaProducao() throws Exception {
-
-        Connection.uploadArquivo(PRODUCAO_DIA_LOCAL , PRODUCAO_DIA_REMOTO);
-
-    }
-   public void uploadUltimoDiaLST(String data) throws Exception {
-    
-       
-        Connection.uploadArquivo(ARQUIVO_DARKLIST_LOCAL, ARQUIVO_DARKLIST_REMOTO+"spdark.lst".replaceAll("spdark.lst", data+"_spdark.lst"));
-
-    }
-    public void uploadLogdia(String data) throws Exception {
-
-        Connection.uploadArquivo(LOCAL_LOG + "/" + data + "_log.csv", REMOTE_LOG + "/" + data + "_log.csv");
-
-    }
-
-    public void downloadNumeralDia() throws Exception {
-
-        Connection.downloadArquivo(PRODUCAO_DIA_REMOTO, PRODUCAO_DIA_LOCAL);
-
-    }
-
     public void downloadArquivoLogHistorico(String LogFile) throws Exception {
 
-        Connection.downloadArquivo(REMOTE_LOG + LogFile, LOCAL_LOG + LogFile);
+        Connection.downloadArquivo(Roots.PASTA_FTP_LOG.getCaminho() + LogFile, Roots.PASTA_TEMP_LOG_FILE.getCaminho() + LogFile);
 
     }
 
-    public void downloadArquivoLst(String DarklistFile) throws Exception {
+    public void uploadLogdia(String data) throws Exception {
 
- 
-        Connection.downloadArquivo(ARQUIVO_DARKLIST_REMOTO + DarklistFile, ARQUIVO_DARKLIST_LOCAL_TEMP);
-
-    }
-
-    public Map obterListaArquivosDataArquivo() throws InterruptedException, IOException, ParseException, Exception {
-
-        return Connection.obterListaArquivo(LISTA_DARKLSIT);
+        Connection.uploadArquivo(Roots.PASTA_TEMP_LOG_FILE.getCaminho() + "/" + data + "_log.csv", Roots.PASTA_FTP_LOG.getCaminho() + "/" + data + "_log.csv");
 
     }
+
     public Map obterListaArquivosLogDataArquivo() throws InterruptedException, IOException, ParseException, Exception {
 
-        return Connection.obterListaArquivo(LISTA_LOG);
+        return Connection.obterListaArquivo(Roots.PASTA_FTP_LOG.getCaminho());
 
     }
-    
-    
-       public void uploadLogAlteracoes(JTable Tabela,String DataProducao) {
+
+    public void uploadLogAlteracoes(JTable Tabela, String DataProducao) {
         int resposta = JOptionPane.showConfirmDialog(null, "Desea enviar los cambios para la equipe regional?", "Confirmacion", JOptionPane.YES_OPTION);
 
         if (resposta == JOptionPane.YES_OPTION) {
             new Thread(() -> {
                 try {
 
-                
-                    
                     Pbar.Progresso.setVisible(true);
-                    
+
                     String arquivoSalvoLog = Manager.getRoot().get("caminho_local_temp_logFile") + DataProducao.replaceAll("-", "") + "_log.csv";
                     new MainTableUtil(Tabela).exportarConteudoParaCsv(arquivoSalvoLog);
                     uploadLogdia(DataProducao.replaceAll("-", ""));
-                    
+
                     Pbar.Progresso.setVisible(false);
                 } catch (Exception ex) {
                     Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
@@ -137,7 +76,41 @@ public class RemoteOperations {
             JOptionPane.showMessageDialog(null, "Voce selecionou 'Não'.");
         }
     }
-    
-    
+
+    public void uploadFlag() throws Exception {
+
+        Connection.uploadArquivo(Roots.ARQUIVO_TEMP_FLAG.getCaminho(), Roots.PASTA_FTP_FLAG.getCaminho());
+
+    }
+
+    public void downloadArquivoLst(String DarklistFile) throws Exception {
+
+        Connection.downloadArquivo(Roots.PASTA_FTP_DARKLIST.getCaminho() + DarklistFile, Roots.PASTA_TEMP_DARK_FILE.getCaminho());
+
+    }
+
+    public Map obterListaArquivosDataArquivo() throws InterruptedException, IOException, ParseException, Exception {
+
+        return Connection.obterListaArquivo(Roots.PASTA_FTP_DARKLIST.getCaminho());
+
+    }
+
+    public void uploadUltimoDiaDaListaLiteral(String data) throws Exception {
+
+        Connection.uploadArquivo(Roots.ARQUIVO_LST_SERVIDOR.getCaminho(), Roots.PASTA_FTP_DARKLIST.getCaminho() + "spdark.lst".replaceAll("spdark.lst", data + "_spdark.lst"));
+
+    }
+
+    public void uploadDiaProducaoNumeralLabel() throws Exception {
+
+        Connection.uploadArquivo(Roots.PRODUCAO_DIARIA_DIA_TEMP.getCaminho(), Roots.LITERAL_FTP_PRODUCAO_DIARIA.getCaminho());
+
+    }
+
+    public void downloadDiaProducaoNumeralLabel() throws Exception {
+
+        Connection.downloadArquivo(Roots.LITERAL_FTP_PRODUCAO_DIARIA.getCaminho(), Roots.PRODUCAO_DIARIA_DIA_TEMP.getCaminho());
+
+    }
 
 }

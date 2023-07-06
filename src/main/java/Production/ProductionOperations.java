@@ -24,10 +24,9 @@ import static sftp.Inicializacao.iniciaConexao;
  */
 public class ProductionOperations {
 
-
     private static ProductionOperations Instancia;
 
-    private ProductionOperations() {
+    public ProductionOperations() {
     }
 
     public static ProductionOperations getInstance() throws Exception {
@@ -47,10 +46,9 @@ public class ProductionOperations {
 
         List<LocalDate> datas = new ArrayList();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-             
-        
+
         File pasta = new File(Manager.getRoot().get("caminho_oficial_out_telepanel_panama_servidor"));
-        
+
         File[] arquivos = pasta.listFiles((dir, nome) -> nome.matches("\\d{8}\\.vsl"));
 
         for (File x : arquivos) {
@@ -70,70 +68,50 @@ public class ProductionOperations {
         FileUtils.write(new File(Manager.getRoot().get("caminho_local_temp_producao_dia")), captarUltimoDiaProducao());
 
     }
-    
-    
-    
-    public void uploadDiaProducao(){
-    
-    
+
+    public void uploadNumeralDiaAtual() {
+
         try {
-            Remote.uploadDiaProducao();
-           uploadUltimoDark(captarUltimoDiaProducao());
+            Remote.uploadDiaProducaoNumeralLabel();
+            uploadUltimoDarkLiteral(captarUltimoDiaProducao());
         } catch (Exception ex) {
             Logger.getLogger(ProductionOperations.class.getName()).log(Level.SEVERE, null, ex);
         }
-    
-    
-    
+
     }
-    
-    
-    
-    
-    public void uploadUltimoDark(String data) throws Exception{
-    
-    
-    Remote.uploadUltimoDiaLST(data);
-    
-    
+
+    public void uploadUltimoDarkLiteral(String data) throws Exception {
+
+        Remote.uploadUltimoDiaDaListaLiteral(data);
+
     }
+
+      public void downloadUltimoProducaoLiteral() throws Exception {
+
+        Remote.downloadDiaProducaoNumeralLabel();
+
+    }
+  
     
-    
-    
-    
-    
-    
-    public void downloadUltimpDiaDark(){
-    
-    
+  
+    public void downloadUltimpDiaDark() {
+
         try {
             Remote.downloadArquivoLst(captarUltimoDiaProducao());
         } catch (Exception ex) {
             Logger.getLogger(ProductionOperations.class.getName()).log(Level.SEVERE, null, ex);
         }
-    
-    
+
     }
-    
-    
-    
-    
-    
+
     public static void main(String[] args) throws Exception {
-        
-         iniciaConexao();
-        
+
+        iniciaConexao();
+
         new ProductionOperations().criarDataProducao();
-        new ProductionOperations().uploadDiaProducao();
-      
-        
-        
-        
+        new ProductionOperations().uploadNumeralDiaAtual();
+
 //        new ProductionOperations().downloadUltimpDiaDark();
-        
-        
     }
-    
-    
 
 }

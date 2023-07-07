@@ -4,7 +4,7 @@ package Util;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-import dao.ListDao;
+import dao.DarkDao;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -35,7 +35,7 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.StyledDocument;
 import javax.swing.text.View;
 import org.apache.commons.lang.StringUtils;
-import static viewClient.DarklistManagerViewClient.lblDtProd;
+import static viewClientDarklist.DarklistManagerViewClient.lblDtProd;
 
 /**
  *
@@ -288,7 +288,7 @@ public class UtilTable {
         this.numeroFinal = NumeroFinal;
         this.numeroIncremental = NumeroIncremental;
 
-        new ListDao(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), ArquivoSelecionado, Tabela).getStatus().forEach((var x) -> {
+        new DarkDao(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), ArquivoSelecionado, Tabela).getStatus().forEach((var x) -> {
 
             if (x != null && x.getId() != 0) {
 

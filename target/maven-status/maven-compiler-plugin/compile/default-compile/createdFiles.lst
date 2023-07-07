@@ -1,0 +1,9 @@
+operations\LocalDarklistOperations.class
+operations\RemoteOperations.class
+dao\WhiteDao.class
+dao\LstDao.class
+Entities\Lista.class
+Entities\Whitelist.class
+operations\LocalOperations.class
+dao\DarkDao.class
+operations\RemoteDarklistOperations.class

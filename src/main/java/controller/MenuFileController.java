@@ -5,7 +5,7 @@
 package controller;
 
 import pathManager.Manager;
-import dao.ListDao;
+import dao.DarkDao;
 import static datechooser.beans.PermanentBean.dispose;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -20,15 +20,16 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import msgs.Pbar;
 import static sftp.Inicializacao.Remote;
-import viewClient.DarklistManagerViewClient;
-import static viewClient.DarklistManagerViewClient.lblDtProd;
-import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
-import static viewClient.DarklistManagerViewClient.txt_filtro;
-import viewClient.MenuFile;
-import static viewClient.MenuFile.TableDatasDark;
-import static viewClient.MenuFile.tbDataLog;
-import viewClient.Visualize;
-import static viewClient.Visualize.loadDarkListEditMode;
+import viewClientDarklist.DarklistManagerViewClient;
+import static viewClientDarklist.DarklistManagerViewClient.lblDtProd;
+import static viewClientDarklist.DarklistManagerViewClient.tbMainViewLst;
+import static viewClientDarklist.DarklistManagerViewClient.txt_filtro;
+import viewClientDarklist.MenuFile;
+import static viewClientDarklist.MenuFile.TableDatasDark;
+import static viewClientDarklist.MenuFile.tbDataLog;
+import viewClientDarklist.Visualize;
+import static viewClientDarklist.Visualize.loadListEditMode;
+
 
 /**
  *
@@ -81,7 +82,7 @@ public class MenuFileController {
             try {
 
                 new Visualize().setVisible(true);
-                loadDarkListEditMode(data, arquivo);
+                loadListEditMode(data, arquivo);
 
             } catch (Exception ex) {
                 Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
@@ -94,7 +95,7 @@ public class MenuFileController {
 
         try {
 
-            DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
+            DefaultTableModel df = (DefaultTableModel) tbMainViewLst.getModel();
             df.setNumRows(0);
 
             int row = tbDataLog.getSelectedRow();
@@ -136,7 +137,7 @@ public class MenuFileController {
     public static void acaoParaLstAtual() {
 
         try {
-            DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
+            DefaultTableModel df = (DefaultTableModel) tbMainViewLst.getModel();
             df.setNumRows(0);
 
             new Thread() {
@@ -156,7 +157,7 @@ public class MenuFileController {
 
                         LocalDate DataFt = LocalDate.parse(lblDtProd.getText(), formatter);
 
-                        new ListDao(DataFt, SelectedFile, tbMainViewDarkList).carregarDarkList();
+                        new DarkDao(DataFt, SelectedFile, tbMainViewLst).carregarLista();
 
                         Pbar.Progresso.setVisible(false);
 

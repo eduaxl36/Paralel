@@ -4,7 +4,9 @@
  */
 package sftp;
 
+import operations.RemoteDarklistOperations;
 import com.jcraft.jsch.JSchException;
+import operations.LocalDarklistOperations;
 
 /**
  *
@@ -12,15 +14,15 @@ import com.jcraft.jsch.JSchException;
  */
 public class Inicializacao {
     
-     public static RemoteOperations Remote;
-     
+     public static RemoteDarklistOperations Remote;
+     public static LocalDarklistOperations localDarkOperations;
      
      
      public static void iniciaConexao() throws JSchException, InterruptedException{
      
      
-            Remote = new RemoteOperations(new ConfiguracoesSFTPModel("LATAM", 0, "regional.latam", "gDItMm7K", "sftp.kantaribopemedia.com", 22));
-
+            Remote = new RemoteDarklistOperations(new ConfiguracoesSFTPModel("LATAM", 0, "regional.latam", "gDItMm7K", "sftp.kantaribopemedia.com", 22));
+            localDarkOperations = new LocalDarklistOperations();
      
      }
     

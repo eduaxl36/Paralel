@@ -11,72 +11,20 @@ import java.util.Objects;
  *
  * @author Eduardo.Fernando
  */
-public class Log {
+public class Log extends Lista {
     
     
-    private long Id;
-    private LocalDate DataAbertura;
-    private LocalDate DataFechamento;
-    private String Comentario;
-    private boolean Status;
     private String DescStatus;
     private String AutorAlteracao;
     private int DiferencaDatas;
     private String AlteracaoRealizada;
 
-    public Log() {
-    }
-
-    public Log(long Id, LocalDate DataAbertura, LocalDate DataFechamento, String Comentario, boolean Status, String DescStatus, String AutorAlteracao, int DiferencaDatas, String AlteracaoRealizada) {
-        this.Id = Id;
-        this.DataAbertura = DataAbertura;
-        this.DataFechamento = DataFechamento;
-        this.Comentario = Comentario;
-        this.Status = Status;
+    public Log(long Id, LocalDate DataAbertura, LocalDate DataFechamento, String Comentario, boolean Status,String DescStatus, String AutorAlteracao, int DiferencaDatas, String AlteracaoRealizada) {
+        super(Id, DataAbertura, DataFechamento, Comentario, Status);
         this.DescStatus = DescStatus;
         this.AutorAlteracao = AutorAlteracao;
         this.DiferencaDatas = DiferencaDatas;
         this.AlteracaoRealizada = AlteracaoRealizada;
-    }
-
-    public long getId() {
-        return Id;
-    }
-
-    public void setId(long Id) {
-        this.Id = Id;
-    }
-
-    public LocalDate getDataAbertura() {
-        return DataAbertura;
-    }
-
-    public void setDataAbertura(LocalDate DataAbertura) {
-        this.DataAbertura = DataAbertura;
-    }
-
-    public LocalDate getDataFechamento() {
-        return DataFechamento;
-    }
-
-    public void setDataFechamento(LocalDate DataFechamento) {
-        this.DataFechamento = DataFechamento;
-    }
-
-    public String getComentario() {
-        return Comentario;
-    }
-
-    public void setComentario(String Comentario) {
-        this.Comentario = Comentario;
-    }
-
-    public boolean isStatus() {
-        return Status;
-    }
-
-    public void setStatus(boolean Status) {
-        this.Status = Status;
     }
 
     public String getDescStatus() {
@@ -112,12 +60,45 @@ public class Log {
     }
 
     @Override
-    public String toString() {
-        return "Log{" + "Id=" + Id + ", DataAbertura=" + DataAbertura + ", DataFechamento=" + DataFechamento + ", Comentario=" + Comentario + ", Status=" + Status + ", DescStatus=" + DescStatus + ", AutorAlteracao=" + AutorAlteracao + ", DiferencaDatas=" + DiferencaDatas + ", AlteracaoRealizada=" + AlteracaoRealizada + '}';
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + Objects.hashCode(this.DescStatus);
+        hash = 17 * hash + Objects.hashCode(this.AutorAlteracao);
+        hash = 17 * hash + this.DiferencaDatas;
+        hash = 17 * hash + Objects.hashCode(this.AlteracaoRealizada);
+        return hash;
     }
-    
 
-    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Log other = (Log) obj;
+        if (this.DiferencaDatas != other.DiferencaDatas) {
+            return false;
+        }
+        if (!Objects.equals(this.DescStatus, other.DescStatus)) {
+            return false;
+        }
+        if (!Objects.equals(this.AutorAlteracao, other.AutorAlteracao)) {
+            return false;
+        }
+        return Objects.equals(this.AlteracaoRealizada, other.AlteracaoRealizada);
+    }
+
+    @Override
+    public String toString() {
+        return "Log{" + "DescStatus=" + DescStatus + ", AutorAlteracao=" + AutorAlteracao + ", DiferencaDatas=" + DiferencaDatas + ", AlteracaoRealizada=" + AlteracaoRealizada + '}';
+    }
+
+
     
     
     

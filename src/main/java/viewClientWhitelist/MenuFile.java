@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package viewClient;
+package viewClientWhitelist;
 
+import viewClientDarklist.*;
 import controller.MainViewController;
 import controller.MenuFileController;
 
@@ -165,7 +166,7 @@ public final class MenuFile extends javax.swing.JFrame {
 
         try {
             MenuFileController.inpecaoEventoCliqueList();
-            DarklistManagerViewClient.btnView.setEnabled(true);
+            WhiteManagerViewClient.btnView.setEnabled(true);
             this.dispose();
             
             // TODO add your handling code here:
@@ -199,6 +200,10 @@ public final class MenuFile extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MenuFile.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>

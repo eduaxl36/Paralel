@@ -4,13 +4,8 @@
  */
 package controller;
 
-import Production.ProductionOperations;
 import Util.MainTableUtil;
-import dao.ListDao;
-import dao.LogDao;
 import flag.CambioFlagView;
-import flag.FlagOperations;
-import static flag.FlagOperations.Flags;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -30,18 +25,21 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import msgs.Pbar;
+import static operations.RemoteOperations.Flags;
 import org.apache.commons.io.FileUtils;
-import pathManager.Manager;
+import pathManager.Roots;
 import static sftp.Inicializacao.Remote;
-import viewClient.CloseMode;
-import static viewClient.CloseMode.instanciaMudancaAdicao;
-import viewClient.DarklistManagerViewClient;
-import static viewClient.DarklistManagerViewClient.lblDtProd;
-import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
-import static viewClient.DarklistManagerViewClient.txt_filtro;
-import viewClient.MenuFile;
-import viewClient.ViewDarkAdd;
-import static viewClient.ViewDarkAdd.instanciaAbertaAdicao;
+import static sftp.Inicializacao.localDarkOperations;
+import viewClientDarklist.CloseMode;
+import static viewClientDarklist.CloseMode.instanciaMudancaAdicao;
+import viewClientDarklist.DarklistManagerViewClient;
+import static viewClientDarklist.DarklistManagerViewClient.lblDtProd;
+import static viewClientDarklist.DarklistManagerViewClient.tbMainViewLst;
+import static viewClientDarklist.DarklistManagerViewClient.txt_filtro;
+import viewClientDarklist.MenuFile;
+import viewClientDarklist.ViewDarkAdd;
+import static viewClientDarklist.ViewDarkAdd.instanciaAbertaAdicao;
+
 
 /**
  *
@@ -51,8 +49,6 @@ public final class MainViewController {
 
     private int Incremental;
     private int FinalNumber;
-
-    private ListDao Darklist;
 
     private final DateTimeFormatter Formatador;
 
@@ -68,10 +64,10 @@ public final class MainViewController {
     
     public ActionListener AbrirCloseMode = (ActionEvent e) -> instanciaMudancaChecker();
 
-    public static final String PATH_LOG_DIARIO = Manager.getRoot().get("caminho_local_temp_producao_dia");
 
     public File SelectedFile;
-
+    
+    
     public void verificaCliquesTabelaAcoes(java.awt.event.MouseEvent evt) {
 
         ///RESETAR 
@@ -81,23 +77,23 @@ public final class MainViewController {
         //
         if (SwingUtilities.isRightMouseButton(evt)) {
 
-            if (tbMainViewDarkList.getSelectedRow() > -1) {
+            if (tbMainViewLst.getSelectedRow() > -1) {
 
                 try {
-                    long domselecionado = Long.parseLong(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 0).toString());
-                    LocalDate dataSelecioanda = LocalDate.parse(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 1).toString());
+                    long domselecionado = Long.parseLong(tbMainViewLst.getValueAt(tbMainViewLst.getSelectedRow(), 0).toString());
+                    LocalDate dataSelecioanda = LocalDate.parse(tbMainViewLst.getValueAt(tbMainViewLst.getSelectedRow(), 1).toString());
 
-                    SelectedFile = new File(Manager.getRoot().get("caminho_local_temp_darkFile"));
+                    SelectedFile = new File(Roots.DARK_PASTA_TEMP_FILE.getCaminho());
 
                     NumeroOriginalSelecionadoTabela
-                            = new MainTableUtil(tbMainViewDarkList).obterNumeroDaLinhaTabelaSelecionadaOriginal(domselecionado,
+                            = new MainTableUtil(tbMainViewLst).obterNumeroDaLinhaTabelaSelecionadaOriginal(domselecionado,
                                     dataSelecioanda,
                                     txt_filtro,
                                     Incremental,
                                     FinalNumber,
                                     SelectedFile);
 
-                    String Verificador = tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 5).toString();
+                    String Verificador = tbMainViewLst.getValueAt(tbMainViewLst.getSelectedRow(), 5).toString();
 
                     ValidadorAprovacao = Verificador.toLowerCase().matches(".*apro.*");
 
@@ -105,7 +101,7 @@ public final class MainViewController {
 
                     ValidadorNovosCambios = Verificador.contains("Nueva Linea/Aprobacion");
 
-                    UtilMainTable.mostrarMenuFlutuante(evt.getComponent(), evt.getX(), evt.getY(), new MainViewController().AbrirCloseMode, new MainViewController().AbrirAdicao, tbMainViewDarkList, ValidadorAprovacao, ValidadorNovosCambios, NaoPermitirCambio);
+                    UtilMainTable.mostrarMenuFlutuante(evt.getComponent(), evt.getX(), evt.getY(), new MainViewController().AbrirCloseMode, new MainViewController().AbrirAdicao, tbMainViewLst, ValidadorAprovacao, ValidadorNovosCambios, NaoPermitirCambio);
                 } catch (IOException ex) {
                     Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (Exception ex) {
@@ -117,7 +113,7 @@ public final class MainViewController {
         }
     }
 
-    public void carregarLogAlteracoes() throws IOException, Exception {
+    public void carregarLogAlteracoes() throws Exception {
 
         DarklistManagerViewClient.btnView.setEnabled(false);
         
@@ -125,14 +121,13 @@ public final class MainViewController {
 
         String obterValorSelecionado = MenuFile.tbDataLog.getValueAt(LinhaSelecionada, 1).toString();
 
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd");
-
-        String LogLocal = Manager.getRoot().get("caminho_local_temp_logFile") + obterValorSelecionado;
-
+        String LogLocal = Roots.DARK_PASTA_TEMP_LOG_FILE.getCaminho() + obterValorSelecionado;
+       
         Remote.downloadArquivoLogHistorico(obterValorSelecionado);
 
-        new LogDao(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), new File(LogLocal), tbMainViewDarkList)
-                .preencherTabela();
+        localDarkOperations.carregarLog(LogLocal);
+
+
 
     }
 
@@ -142,6 +137,7 @@ public final class MainViewController {
 
             new Thread() {
 
+                @Override
                 public void run() {
 
                     try {
@@ -170,13 +166,15 @@ public final class MainViewController {
 
         Flags.clear();
 
-        UtilMainTable = new MainTableUtil(tbMainViewDarkList);
+        UtilMainTable = new MainTableUtil(tbMainViewLst);
 
         anularEnterDentroFiltro();
 
-        new ProductionOperations().downloadUltimoProducaoLiteral();
+        Remote.downloadDiaProducaoNumeralLabel();
 
-        lblDtProd.setText(FileUtils.readFileToString(new File(PATH_LOG_DIARIO)));
+        lblDtProd.setText(FileUtils.readFileToString(new File(Roots.DARK_PRODUCAO_DIARIA_DIA_TEMP.getCaminho())));
+        
+    
 
     }
 
@@ -189,22 +187,21 @@ public final class MainViewController {
         //
         if (SwingUtilities.isRightMouseButton(evt)) {
 
-            if (tbMainViewDarkList.getSelectedRow() > -1) {
+            if (tbMainViewLst.getSelectedRow() > -1) {
 
                 try {
-                    long domselecionado = Long.parseLong(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 0).toString());
-                    LocalDate dataSelecioanda = LocalDate.parse(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 1).toString());
-                    SelectedFile = new File(PATH_LOG_DIARIO);
-
+                    long domselecionado = Long.parseLong(tbMainViewLst.getValueAt(tbMainViewLst.getSelectedRow(), 0).toString());
+                    LocalDate dataSelecioanda = LocalDate.parse(tbMainViewLst.getValueAt(tbMainViewLst.getSelectedRow(), 1).toString());
+                    SelectedFile = new File(Roots.DARK_PRODUCAO_DIARIA_DIA_TEMP.getCaminho());
                     NumeroOriginalSelecionadoTabela
-                            = new MainTableUtil(tbMainViewDarkList).obterNumeroDaLinhaTabelaSelecionadaOriginal(domselecionado,
+                            = new MainTableUtil(tbMainViewLst).obterNumeroDaLinhaTabelaSelecionadaOriginal(domselecionado,
                                     dataSelecioanda,
                                     txt_filtro,
                                     Incremental,
                                     FinalNumber,
                                     SelectedFile);
 
-                    String Verificador = tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 5).toString();
+                    String Verificador = tbMainViewLst.getValueAt(tbMainViewLst.getSelectedRow(), 5).toString();
 
                     ValidadorAprovacao = Verificador.toLowerCase().matches(".*apro.*");
 
@@ -212,7 +209,7 @@ public final class MainViewController {
 
                     ValidadorNovosCambios = Verificador.contains("Nueva Linea/Aprobacion");
 
-                    UtilMainTable.mostrarMenuFlutuante(evt.getComponent(), evt.getX(), evt.getY(), AbrirCloseMode, AbrirAdicao, tbMainViewDarkList, ValidadorAprovacao, ValidadorNovosCambios, NaoPermitirCambio);
+                    UtilMainTable.mostrarMenuFlutuante(evt.getComponent(), evt.getX(), evt.getY(), AbrirCloseMode, AbrirAdicao, tbMainViewLst, ValidadorAprovacao, ValidadorNovosCambios, NaoPermitirCambio);
                 } catch (IOException ex) {
                     Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -260,18 +257,12 @@ public final class MainViewController {
 
     }
 
-    public void abrirFlagView() {
+    public void abrirFlagView() throws Exception {
 
-        try {
 
-            new FlagOperations().obterListaDeFlags(lblDtProd.getText());
-            new FlagOperations().gerarFlag(lblDtProd.getText());
-
-        } catch (Exception ex) {
-            Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        new CambioFlagView().setVisible(true);
+            Remote.obterListaDeFlags(lblDtProd.getText());
+            Remote.gerarFlag(lblDtProd.getText());
+            new CambioFlagView().setVisible(true);
 
     }
 
@@ -279,11 +270,11 @@ public final class MainViewController {
         String searchText = txt_filtro.getText();
 
         if (searchText.isEmpty()) {
-            tbMainViewDarkList.setRowSorter(null);
+            tbMainViewLst.setRowSorter(null);
         } else {
-            DefaultTableModel model = (DefaultTableModel) tbMainViewDarkList.getModel();
+            DefaultTableModel model = (DefaultTableModel) tbMainViewLst.getModel();
             TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
-            tbMainViewDarkList.setRowSorter(sorter);
+            tbMainViewLst.setRowSorter(sorter);
 
             List<RowSorter.SortKey> sortKeys = new ArrayList<>();
             sortKeys.add(new RowSorter.SortKey(0, SortOrder.ASCENDING));

@@ -31,9 +31,9 @@ public class LogDao {
 
     }
 
-    public LogDao(LocalDate DataProducao, File DarkListFile) {
+    public LogDao(LocalDate DataProducao, File LstFile) {
         this.DataProducao = DataProducao;
-        this.LogFile = DarkListFile;
+        this.LogFile = LstFile;
         
         Modelo = (DefaultTableModel) Tabela.getModel();
     }

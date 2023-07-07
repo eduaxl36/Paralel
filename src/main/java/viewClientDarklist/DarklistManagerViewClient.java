@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package viewClient;
+package viewClientDarklist;
 
 
 import com.formdev.flatlaf.FlatDarkLaf;
@@ -50,7 +50,7 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
         jMenuItem1 = new javax.swing.JMenuItem();
         MainPn = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tbMainViewDarkList = new javax.swing.JTable();
+        tbMainViewLst = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         txt_filtro = new javax.swing.JTextField();
         cbTipo = new javax.swing.JComboBox<>();
@@ -72,7 +72,7 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
             }
         });
 
-        tbMainViewDarkList.setModel(new javax.swing.table.DefaultTableModel(
+        tbMainViewLst.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -80,19 +80,19 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
                 "Hogar", "Fecha Inicio", "Fecha Fin", "Obs", "En Darklist?", "Puede Cambiar?", "Log", "Cerramiento<>Propduccion", "Cambio Realizado"
             }
         ));
-        tbMainViewDarkList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        tbMainViewDarkList.addMouseListener(new java.awt.event.MouseAdapter() {
+        tbMainViewLst.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        tbMainViewLst.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tbMainViewDarkListMouseClicked(evt);
+                tbMainViewLstMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                tbMainViewDarkListMouseEntered(evt);
+                tbMainViewLstMouseEntered(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                tbMainViewDarkListMousePressed(evt);
+                tbMainViewLstMousePressed(evt);
             }
         });
-        jScrollPane1.setViewportView(tbMainViewDarkList);
+        jScrollPane1.setViewportView(tbMainViewLst);
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
 
@@ -243,17 +243,17 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tbMainViewDarkListMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbMainViewDarkListMouseEntered
+    private void tbMainViewLstMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbMainViewLstMouseEntered
 
 
-    }//GEN-LAST:event_tbMainViewDarkListMouseEntered
+    }//GEN-LAST:event_tbMainViewLstMouseEntered
 
 
     private void btnUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadActionPerformed
         try {
             Controller = new MainViewController();
-             Controller.abrirFlagView();
-            Remote.uploadLogAlteracoes(tbMainViewDarkList, lblDtProd.getText());
+            Controller.abrirFlagView();
+            Remote.uploadLogAlteracoes(tbMainViewLst, lblDtProd.getText());
             Remote.uploadFlag();
         } catch (Exception ex) {
             Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -289,7 +289,7 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
     }//GEN-LAST:event_cbTipoItemStateChanged
 
-    private void tbMainViewDarkListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbMainViewDarkListMouseClicked
+    private void tbMainViewLstMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbMainViewLstMouseClicked
         try {
             Controller = new MainViewController();
             Controller.verificaCliquesTabelaAcoes(evt);
@@ -297,11 +297,11 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
             Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-    }//GEN-LAST:event_tbMainViewDarkListMouseClicked
+    }//GEN-LAST:event_tbMainViewLstMouseClicked
 
-    private void tbMainViewDarkListMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbMainViewDarkListMousePressed
+    private void tbMainViewLstMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbMainViewLstMousePressed
 
-    }//GEN-LAST:event_tbMainViewDarkListMousePressed
+    }//GEN-LAST:event_tbMainViewLstMousePressed
 
     private void txt_filtroKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_filtroKeyPressed
         try {
@@ -372,7 +372,7 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     public static javax.swing.JLabel lblDtProd;
     public static final javax.swing.JLabel lblmode = new javax.swing.JLabel();
-    public static javax.swing.JTable tbMainViewDarkList;
+    public static javax.swing.JTable tbMainViewLst;
     public static javax.swing.JTextField txt_filtro;
     // End of variables declaration//GEN-END:variables
 }

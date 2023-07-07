@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package viewClient;
+package viewClientDarklist;
 
 
 import com.formdev.flatlaf.FlatLightLaf;
@@ -22,8 +22,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import static viewClient.DarklistManagerViewClient.lblDtProd;
-import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
+import static viewClientDarklist.DarklistManagerViewClient.lblDtProd;
+import static viewClientDarklist.DarklistManagerViewClient.tbMainViewLst;
+
 
 
 
@@ -211,9 +212,9 @@ public class ViewDarkAdd extends javax.swing.JFrame {
 
     public static void removeTableLine() {
 
-        DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
+        DefaultTableModel df = (DefaultTableModel) tbMainViewLst.getModel();
 
-        df.removeRow(tbMainViewDarkList.getSelectedRow());
+        df.removeRow(tbMainViewLst.getSelectedRow());
 
     }
 
@@ -226,7 +227,7 @@ public class ViewDarkAdd extends javax.swing.JFrame {
 
     public  boolean addLineOneTable() throws ParseException {
 
-        DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
+        DefaultTableModel df = (DefaultTableModel) tbMainViewLst.getModel();
 
         LocalDate datainicial = LocalDate.parse(InitialHouseHoldDate.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         String TreatedInitialDate = datainicial.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -317,12 +318,9 @@ public class ViewDarkAdd extends javax.swing.JFrame {
         } catch (ParseException ex) {
             Logger.getLogger(ViewDarkAdd.class.getName()).log(Level.SEVERE, null, ex);
         }
-            
-            // Coloque aqui o código que deseja executar quando a opção for "Sim"
-            
-            // Coloque aqui o código que deseja executar quando a opção for "Sim"
+
         } else if (resposta == JOptionPane.NO_OPTION) {
-            // Caso a opção selecionada seja "Não"
+ 
             JOptionPane.showMessageDialog(null, "Você selecionou 'Não'.");
             
            

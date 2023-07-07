@@ -4,7 +4,7 @@
  */
 package Util;
 
-import dao.ListDao;
+import dao.DarkDao;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -28,7 +28,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
-import static viewClient.DarklistManagerViewClient.lblDtProd;
+import static viewClientDarklist.DarklistManagerViewClient.lblDtProd;
 
 /**
  *
@@ -170,7 +170,7 @@ public final class MainTableUtil {
         
        
         
-        new ListDao(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), ArquivoSelecionado,Tabela).getStatus().forEach((var x) -> {
+        new DarkDao(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), ArquivoSelecionado,Tabela).getStatus().forEach((var x) -> {
 
             if (x != null && x.getId() != 0) {
 

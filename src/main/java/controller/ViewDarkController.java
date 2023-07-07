@@ -4,22 +4,21 @@
  */
 package controller;
 
-import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
+import static viewClientDarklist.DarklistManagerViewClient.tbMainViewLst;
 
 /**
  *
  * @author eduardo.fernando
  */
 public class ViewDarkController {
-    
-    
-     public boolean validarSeProucaoJaFoi(long Domicilio) {
 
-        for (int i = 0; i < tbMainViewDarkList.getRowCount(); i++) {
+    public boolean validarSeProucaoJaFoi(long Domicilio) {
 
-            if (Long.parseLong(tbMainViewDarkList.getValueAt(i, 0).toString()) == Domicilio) {
+        for (int i = 0; i < tbMainViewLst.getRowCount(); i++) {
 
-                if (tbMainViewDarkList.getValueAt(i, 4).toString().equals("true")) {
+            if (Long.parseLong(tbMainViewLst.getValueAt(i, 0).toString()) == Domicilio) {
+
+                if (tbMainViewLst.getValueAt(i, 4).toString().equals("true")) {
 
                     return true;
 
@@ -32,6 +31,5 @@ public class ViewDarkController {
         return false;
 
     }
-    
-    
+
 }

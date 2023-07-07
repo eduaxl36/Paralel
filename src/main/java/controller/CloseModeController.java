@@ -14,18 +14,17 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import org.apache.commons.lang.time.DateUtils;
-import viewClient.CloseMode;
-import static viewClient.CloseMode.calcularDiferencaEmMinutos;
-import static viewClient.CloseMode.dateChooserCombo;
-import static viewClient.CloseMode.lblUserName;
-import static viewClient.CloseMode.txt_Comment;
-import static viewClient.DarklistManagerViewClient.lblDtProd;
-import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
-import static viewClient.DarklistManagerViewClient.txt_filtro;
+import viewClientDarklist.CloseMode;
+import static viewClientDarklist.CloseMode.calcularDiferencaEmMinutos;
+import static viewClientDarklist.CloseMode.dateChooserCombo;
+import static viewClientDarklist.CloseMode.lblUserName;
+import static viewClientDarklist.CloseMode.txt_Comment;
+import static viewClientDarklist.DarklistManagerViewClient.lblDtProd;
+import static viewClientDarklist.DarklistManagerViewClient.tbMainViewLst;
+import static viewClientDarklist.DarklistManagerViewClient.txt_filtro;
 
 /**
  *
@@ -51,14 +50,14 @@ public class CloseModeController {
     public void inicializacoes() throws Exception{
     
 
-        LocalDate datafn = LocalDate.parse(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 2).toString());
+        LocalDate datafn = LocalDate.parse(tbMainViewLst.getValueAt(tbMainViewLst.getSelectedRow(), 2).toString());
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(java.util.Date.from(datafn.atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
         dateChooserCombo.setSelectedDate(calendar);
 
-        txt_Comment.setText("" + tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 3));
+        txt_Comment.setText("" + tbMainViewLst.getValueAt(tbMainViewLst.getSelectedRow(), 3));
 
         String username = System.getProperty("user.name");
         lblUserName.setText(username);
@@ -79,7 +78,7 @@ public class CloseModeController {
 
     public boolean verificarFechamentoInferiorAbertura() throws ParseException {
 
-        LocalDate dataInicio = LocalDate.parse(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 1).toString());
+        LocalDate dataInicio = LocalDate.parse(tbMainViewLst.getValueAt(tbMainViewLst.getSelectedRow(), 1).toString());
 
         LocalDate dataf = DateUtils.toCalendar(dateChooserCombo.getSelectedDate().getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
@@ -99,7 +98,7 @@ public class CloseModeController {
                 if (fecharLinha()) {
 
                     txt_filtro.setText("");
-                    new MainTableUtil(tbMainViewDarkList).ajustarFormataColunasTabelaConteudo();
+                    new MainTableUtil(tbMainViewLst).ajustarFormataColunasTabelaConteudo();
                     MainController.filtrarTabelaCriterio();
                    
 
@@ -120,7 +119,7 @@ public class CloseModeController {
     public boolean fecharLinha() throws ParseException {
         txt_filtro.setText("");
 
-        LocalDate dataInicio = LocalDate.parse(tbMainViewDarkList.getValueAt(tbMainViewDarkList.getSelectedRow(), 1).toString());
+        LocalDate dataInicio = LocalDate.parse(tbMainViewLst.getValueAt(tbMainViewLst.getSelectedRow(), 1).toString());
         Date RawProductionDate = new SimpleDateFormat("yyyyMMdd").parse(lblDtProd.getText());
         LocalDate ProducionDate = RawProductionDate.toInstant()
                 .atZone(ZoneId.systemDefault())
@@ -137,7 +136,7 @@ public class CloseModeController {
 
         String status = definidorDeAcoes(validator);
 
-        DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
+        DefaultTableModel df = (DefaultTableModel) tbMainViewLst.getModel();
 
         if (!verificarFechamentoInferiorAbertura()) {
 

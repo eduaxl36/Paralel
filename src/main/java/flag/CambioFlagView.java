@@ -4,8 +4,9 @@
  */
 package flag;
 
-import static flag.FlagOperations.Flags;
+
 import javax.swing.table.DefaultTableModel;
+import static operations.RemoteOperations.Flags;
 
 
 /**

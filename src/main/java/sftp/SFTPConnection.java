@@ -125,55 +125,8 @@ public class SFTPConnection extends FTPService {
     
     
     
-    
-    public String checkFlag() throws JSchException, InterruptedException, IOException, ParseException, SftpException, Exception {
-    // Listar os arquivos no diretório remoto
-    Vector<ChannelSftp.LsEntry> files = this.Canal.ls("/IMI/GerenciadorCambios/Panama/def/dkl/flag/");
 
-    String fileName = "";
 
-    for (ChannelSftp.LsEntry entry : files) {
-        if (!entry.getAttrs().isDir()) {
-            fileName = entry.getFilename();
-            
-            if (fileName.contains("true")) {
-                return "tem";
-            }
-        }
-    }
-
-    return "nao tem";
-}
-
-   public Map getLog() throws JSchException, InterruptedException, IOException, ParseException, SftpException, Exception {
-
-        // Listar os arquivos no diretório remoto
-        Vector<ChannelSftp.LsEntry> files = this.Canal.ls("/IMI/GerenciadorCambios/Panama/def/dkl/log/");
-
-  
-        fileLog = new HashMap<>();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String fileName = "";
-        String formattedDate = "";
-        long timestamp = 0;
-
-        for (ChannelSftp.LsEntry entry : files) {
-
-            if (!entry.getAttrs().isDir()) {
-
-                fileName = entry.getFilename();
-                
-                timestamp = entry.getAttrs().getMTime() * 1000L;
-
-                Date DarkListDate = new SimpleDateFormat("yyyyMMdd").parse(fileName.substring(0, 8));
-
-                fileLog.put(new SimpleDateFormat("yyyyMMdd").format(DarkListDate), fileName);
-            }
-        }
-
-        return fileLog;
-
-    }
    
    
     public Map obterListaArquivo(String Remoto) throws JSchException, InterruptedException, IOException, ParseException, SftpException, Exception {

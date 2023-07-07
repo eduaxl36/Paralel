@@ -2,12 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package viewClient;
-
+package viewClientDarklist;
 
 import pathManager.Manager;
 import com.formdev.flatlaf.FlatLightLaf;
-import dao.ListDao;
+import dao.DarkDao;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -18,29 +17,21 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.UnsupportedLookAndFeelException;
 
-
 /**
  *
  * @author Eduardo.Fernando
  */
 public class Visualize extends javax.swing.JFrame {
 
+    public static String CAMINHO_LOCAL_DARKLIST = Manager.getRoot().get("caminho_local_temp_darkFile");
 
-  public static String  CAMINHO_LOCAL_DARKLIST = Manager.getRoot().get("caminho_local_temp_darkFile");
-    
-    
-    
-   
-  public static void loadDarkListEditMode(String Data,String DarklistFile) throws IOException, Exception {
+    public static void loadListEditMode(String Data, String DarklistFile) throws IOException, Exception {
 
-      
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-        
-        
         String DarklistLocal = new File(CAMINHO_LOCAL_DARKLIST).toString();
 
-        new ListDao(LocalDate.parse(Data, fmt).plusDays(1), new File(DarklistLocal+"/"+DarklistFile).getParentFile(),tbMainViewDarkList).getStatus().forEach(x -> {
+        new DarkDao(LocalDate.parse(Data, fmt).plusDays(1), new File(DarklistLocal + "/" + DarklistFile).getParentFile(), tbMainViewDarkList).getStatus().forEach(x -> {
 
             DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
 
@@ -65,14 +56,12 @@ public class Visualize extends javax.swing.JFrame {
         });
 
     }
-  
 
     public Visualize() throws IOException, Exception {
 
         FlatLightLaf.install();
 
         initComponents();
-
 
     }
 
@@ -145,7 +134,6 @@ public class Visualize extends javax.swing.JFrame {
 
     private void tbMainViewDarkListMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbMainViewDarkListMouseEntered
 
-
         // TODO add your handling code here:
     }//GEN-LAST:event_tbMainViewDarkListMouseEntered
 
@@ -179,15 +167,13 @@ public class Visualize extends javax.swing.JFrame {
 //        }
         //</editor-fold>
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    new Visualize().setVisible(true);
-                } catch (IOException ex) {
-                    Logger.getLogger(Visualize.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (Exception ex) {
-                    Logger.getLogger(Visualize.class.getName()).log(Level.SEVERE, null, ex);
-                }
+        java.awt.EventQueue.invokeLater(() -> {
+            try {
+                new Visualize().setVisible(true);
+            } catch (IOException ex) {
+                Logger.getLogger(Visualize.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(Visualize.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
     }
@@ -200,5 +186,3 @@ public class Visualize extends javax.swing.JFrame {
     public static javax.swing.JTable tbMainViewDarkList;
     // End of variables declaration//GEN-END:variables
 }
-
-

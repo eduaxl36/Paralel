@@ -51,6 +51,67 @@
        {
     "processo": "caminho_ftp_flag",
     "caminho": "/IMI/GerenciadorCambios/Panama/def/dkl/flag/"
+  },
+  
+  {
+    "processo": "caminho_local_temp_producao_dia_white",
+    "caminho": "D:/environment/temp/EntregasOficiaisConfiguracao/OficialPaths/Panama/PRO_DIA/logDia.txt"
+  },
+  {
+    "processo": "caminho_local_temp_logFile_white",
+    "caminho": "D:/environment/temp/EntregasOficiaisConfiguracao/OficialPaths/Panama/LOG/"
+  },
+  {
+    "processo": "caminho_local_temp_darkFile_white",
+    "caminho": "D:/environment/temp/EntregasOficiaisConfiguracao/OficialPaths/Panama/DKL/spwhite.lst"
+  },
+  {
+    "processo": "caminho_local_temp_whiteFile_white",
+    "caminho": "D:/environment/temp/EntregasOficiaisConfiguracao/OficialPaths/Panama/WHTL/"
+  },
+  {
+    "processo": "caminho_local_temp_flag_white",
+    "caminho": "D:/environment/temp/EntregasOficiaisConfiguracao/OficialPaths/Panama/FLAG/true.txt"
+  } ,
+  
+     {
+    "processo": "caminho_oficial_temp_darkFile_servidor_white",
+    "caminho": "\\\\kimbrspp565\\ProducaoLatam\\PA\\1.Telepanel\\database\\definitivo\\cf\\PaRt\\spwhite.lst"
+  },
+      {
+    "processo": "caminho_oficial_temp_darkFile_folder_only_servidor_white",
+    "caminho": "\\\\kimbrspp565\\ProducaoLatam\\PA\\1.Telepanel\\database\\definitivo\\cf\\PaRt\\"
+  },
+       {
+    "processo": "caminho_oficial_out_telepanel_panama_servidor_white",
+    "caminho": "\\\\kimbrspp565\\ProducaoLatam\\PA\\1.Telepanel\\database\\definitivo\\out\\PaRt\\"
+  },
+  
+    {
+    "processo": "caminho_ftp_producao_dia_white",
+    "caminho": "/IMI/GerenciadorCambios/Panama/"
+  },    {
+    "processo": "caminho_ftp_producao_dia_completo_arquivo_white",
+    "caminho": "/IMI/GerenciadorCambios/Panama/logDia.txt"
+  },
+      {
+    "processo": "caminho_ftp_darklist_white",
+    "caminho": "/IMI/GerenciadorCambios/Panama/def/wht/originals/"
+  },
+       {
+    "processo": "caminho_ftp_log_white",
+    "caminho": "/IMI/GerenciadorCambios/Panama/def/wht/log/"
+  },
+       {
+    "processo": "caminho_ftp_flag_white",
+    "caminho": "/IMI/GerenciadorCambios/Panama/def/wht/flag/"
   }
+  
+  
+  
+  
+  
+  
+  
      
 ]

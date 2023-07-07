@@ -2,30 +2,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package viewClient;
+package viewClientWhitelist;
 
-import Util.MainTableUtil;
+import viewClientDarklist.*;
 import controller.CloseModeController;
 import controller.MainViewController;
-import static controller.MainViewController.NumeroOriginalSelecionadoTabela;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
-import org.apache.commons.lang.time.DateUtils;
-import static viewClient.DarklistManagerViewClient.lblDtProd;
-import static viewClient.DarklistManagerViewClient.tbMainViewDarkList;
-import static viewClient.DarklistManagerViewClient.txt_filtro;
+
 
 /**
  *
@@ -36,12 +24,13 @@ public class CloseMode extends javax.swing.JFrame {
   
     CloseModeController Controller;
 
-    private MainViewController MainController;
+    private final MainViewController MainController;
     public static boolean instanciaMudancaAdicao = false;
 
 
 
     public static long calcularDiferencaEmMinutos(LocalDate data1, LocalDate data2) {
+        
         LocalDateTime dateTime1 = LocalDateTime.of(data1, LocalTime.MIN);
         LocalDateTime dateTime2 = LocalDateTime.of(data2, LocalTime.MIN);
 
@@ -50,8 +39,10 @@ public class CloseMode extends javax.swing.JFrame {
 
     /**
      * Creates new form CloseMode
+     * @throws java.lang.Exception
      */
     public CloseMode() throws Exception {
+        
         initComponents();
 
         Controller = new CloseModeController();
@@ -59,7 +50,6 @@ public class CloseMode extends javax.swing.JFrame {
         MainController = new MainViewController();
         
         Controller.inicializacoes();
-
 
     }
 
@@ -214,7 +204,7 @@ public class CloseMode extends javax.swing.JFrame {
   
 
     /**
-     * @return @throws java.text.ParseException
+     * @param args
      */
  
     public static void main(String args[]) {
@@ -239,6 +229,8 @@ public class CloseMode extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(CloseMode.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 

@@ -51,6 +51,7 @@ public abstract class RemoteOperations {
     public abstract Set<entidadeFlag> obterListaDeFlags(String dia) throws IOException;
 
     public abstract void gerarFlag(String Dia) throws IOException;
+    public abstract void contestarFlag(String Dia) throws IOException;
 
     public abstract void uploadUltimoDiaDaListaLiteral(String data) throws Exception;
 

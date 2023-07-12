@@ -4,64 +4,32 @@
  */
 package viewClientDarklist;
 
-import pathManager.Manager;
+
+import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
-import dao.DarkDao;
-import java.io.File;
+import static controller.MenuFileController.SelectedFile;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-
+import static viewClientDarklist.DarklistManagerViewClient.lblmode;
 /**
  *
  * @author Eduardo.Fernando
  */
 public class Visualize extends javax.swing.JFrame {
 
-    public static String CAMINHO_LOCAL_DARKLIST = Manager.getRoot().get("caminho_local_temp_darkFile");
-
-    public static void loadListEditMode(String Data, String DarklistFile) throws IOException, Exception {
-
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd");
-
-        String DarklistLocal = new File(CAMINHO_LOCAL_DARKLIST).toString();
-
-        new DarkDao(LocalDate.parse(Data, fmt).plusDays(1), new File(DarklistLocal + "/" + DarklistFile).getParentFile(), tbMainViewDarkList).getStatus().forEach(x -> {
-
-            DefaultTableModel df = (DefaultTableModel) tbMainViewDarkList.getModel();
-
-            String allowChange = "No permitido cambios";
-
-            if (x.isStatus()) {
-
-                allowChange = "Listo para Cambio";
-
-            }
-
-            df.addRow(new Object[]{
-                x.getId(),
-                x.getDataAbertura(),
-                x.getDataFechamento(),
-                x.getComentario(),
-                x.isStatus(),
-                allowChange
-
-            });
-
-        });
-
-    }
-
+    
     public Visualize() throws IOException, Exception {
 
-        FlatLightLaf.install();
-
+//        FlatLightLaf.install();
+UIManager.setLookAndFeel(new FlatDarkLaf());
         initComponents();
+        
+        
+        lblModo.setText(lblmode.getText());
+      
 
     }
 
@@ -79,10 +47,15 @@ public class Visualize extends javax.swing.JFrame {
         MainPn = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbMainViewDarkList = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        lblModo = new javax.swing.JLabel();
+        lblModoFecha = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pd.png"))); // NOI18N
         jMenuItem1.setText("jMenuItem1");
 
+        setTitle("Lista Retroativa");
         setResizable(false);
 
         tbMainViewDarkList.setModel(new javax.swing.table.DefaultTableModel(
@@ -101,20 +74,45 @@ public class Visualize extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tbMainViewDarkList);
 
+        jLabel1.setText("Modo Lista : ");
+
+        lblModo.setText("...");
+
+        lblModoFecha.setText("...");
+
+        jLabel2.setText("Fecha : ");
+
         javax.swing.GroupLayout MainPnLayout = new javax.swing.GroupLayout(MainPn);
         MainPn.setLayout(MainPnLayout);
         MainPnLayout.setHorizontalGroup(
             MainPnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(MainPnLayout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 939, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(MainPnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 619, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(MainPnLayout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(33, 33, 33)
+                        .addComponent(lblModo, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(36, 36, 36)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addComponent(lblModoFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(16, Short.MAX_VALUE))
         );
         MainPnLayout.setVerticalGroup(
             MainPnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, MainPnLayout.createSequentialGroup()
-                .addContainerGap(14, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 601, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addGroup(MainPnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(MainPnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblModoFecha))
+                    .addGroup(MainPnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblModo)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 532, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(15, 15, 15))
         );
 
@@ -142,36 +140,12 @@ public class Visualize extends javax.swing.JFrame {
      */
     public static void main(String args[]) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
 
-//     PlasticLookAndFeel.setPlasticTheme(new ExperienceBlue());
-//            UIManager.setLookAndFeel(new PlasticLookAndFeel());
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-//        try {
-//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-//                if ("Nimbus".equals(info.getName())) {
-//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-//                    break;
-//                }
-//            }
-//        } catch (ClassNotFoundException ex) {
-//            java.util.logging.Logger.getLogger(DarklistManagerView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (InstantiationException ex) {
-//            java.util.logging.Logger.getLogger(DarklistManagerView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (IllegalAccessException ex) {
-//            java.util.logging.Logger.getLogger(DarklistManagerView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-//            java.util.logging.Logger.getLogger(DarklistManagerView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-//        }
-        //</editor-fold>
-        /* Create and display the form */
+
+        
+         UIManager.setLookAndFeel(new FlatDarkLaf());
         java.awt.EventQueue.invokeLater(() -> {
             try {
                 new Visualize().setVisible(true);
-            } catch (IOException ex) {
-                Logger.getLogger(Visualize.class.getName()).log(Level.SEVERE, null, ex);
             } catch (Exception ex) {
                 Logger.getLogger(Visualize.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -181,8 +155,12 @@ public class Visualize extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel MainPn;
     private datechooser.beans.DateChooserCombo dateChooserCombo1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollPane1;
+    public static javax.swing.JLabel lblModo;
+    public static javax.swing.JLabel lblModoFecha;
     public static javax.swing.JTable tbMainViewDarkList;
     // End of variables declaration//GEN-END:variables
 }

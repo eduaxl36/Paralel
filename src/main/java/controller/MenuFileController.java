@@ -4,8 +4,9 @@
  */
 package controller;
 
-import pathManager.Manager;
+import static Adapter.Adapter.Remote;
 import dao.DarkDao;
+import dao.WhiteDao;
 import static datechooser.beans.PermanentBean.dispose;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -13,14 +14,16 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import msgs.Pbar;
-import static sftp.Inicializacao.Remote;
+import operations.RemoteDarklistOperations;
 import viewClientDarklist.DarklistManagerViewClient;
+import static viewClientDarklist.DarklistManagerViewClient.Adaptador;
 import static viewClientDarklist.DarklistManagerViewClient.lblDtProd;
 import static viewClientDarklist.DarklistManagerViewClient.tbMainViewLst;
 import static viewClientDarklist.DarklistManagerViewClient.txt_filtro;
@@ -28,8 +31,7 @@ import viewClientDarklist.MenuFile;
 import static viewClientDarklist.MenuFile.TableDatasDark;
 import static viewClientDarklist.MenuFile.tbDataLog;
 import viewClientDarklist.Visualize;
-import static viewClientDarklist.Visualize.loadListEditMode;
-
+import static viewClientDarklist.Visualize.lblModoFecha;
 
 /**
  *
@@ -37,13 +39,15 @@ import static viewClientDarklist.Visualize.loadListEditMode;
  */
 public class MenuFileController {
 
-    private MainViewController MainController;
+    private final MainViewController MainController;
+    private final VizualizeController visualizeController;
 
     public static File SelectedFile;
 
     public MenuFileController() throws Exception {
 
         MainController = new MainViewController();
+        visualizeController = new VizualizeController();
 
     }
 
@@ -61,19 +65,21 @@ public class MenuFileController {
 
     }
 
-    public static void acaoParaDarkRetroativo() throws Exception {
+    public void abrirVisualizacaoRetroativa() throws Exception {
 
         int row = TableDatasDark.getSelectedRow();
 
         String data = TableDatasDark.getValueAt(row, 0).toString();
         String arquivo = TableDatasDark.getValueAt(row, 1).toString();
 
-        DarklistManagerViewClient.lblmode.setText("Darklist");
-        
-       Remote.downloadArquivoLst(TableDatasDark.getValueAt(TableDatasDark.getSelectedRow(), 1).toString());
+        if (Remote instanceof RemoteDarklistOperations) {
+            DarklistManagerViewClient.lblmode.setText("Darklist");
+        } else {
+            DarklistManagerViewClient.lblmode.setText("WhiteList");
 
+        }
 
-        int resposta = JOptionPane.showConfirmDialog(null, "Para el historico del dark, esta disponible solo para visualizacion!, quiere abrir ?",
+        int resposta = JOptionPane.showConfirmDialog(null, "Para el historico del Lista, esta disponible solo para visualizacion!, quiere abrir ?",
                 "Confirmacion",
                 JOptionPane.YES_OPTION);
 
@@ -81,8 +87,12 @@ public class MenuFileController {
 
             try {
 
+                Remote.downloadArquivoLst(TableDatasDark.getValueAt(TableDatasDark.getSelectedRow(), 1).toString());
+
                 new Visualize().setVisible(true);
-                loadListEditMode(data, arquivo);
+
+                visualizeController.loadListEditMode(data, arquivo);
+                lblModoFecha.setText(data);
 
             } catch (Exception ex) {
                 Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
@@ -91,7 +101,7 @@ public class MenuFileController {
 
     }
 
-    public void acaoParaLog() {
+    public void abrirVisualizacaoRetroativaLog() {
 
         try {
 
@@ -110,14 +120,14 @@ public class MenuFileController {
 
                         Pbar.Progresso.setVisible(true);
 
-                        SelectedFile = new File(Manager.getRoot().get("caminho_local_temp_logFile") + tbDataLog.getValueAt(tbDataLog.getSelectedRow(), 1));
+                        SelectedFile = new File(Adaptador.getPastaTempLogFile() + tbDataLog.getValueAt(tbDataLog.getSelectedRow(), 1));
+
+                        lblModoFecha.setText(tbDataLog.getValueAt(tbDataLog.getSelectedRow(), 1).toString());
 
                         MainController.carregarLogAlteracoes();
 
-                        DarklistManagerViewClient.lblmode.setText("Log View");
-
                         DarklistManagerViewClient.lblDtProd.setText(arquivo.substring(0, 8));
-                        
+
                         Pbar.Progresso.setVisible(false);
 
                     } catch (Exception ex) {
@@ -134,7 +144,7 @@ public class MenuFileController {
 
     }
 
-    public static void acaoParaLstAtual() {
+    public void abrirListaCorrente() {
 
         try {
             DefaultTableModel df = (DefaultTableModel) tbMainViewLst.getModel();
@@ -151,13 +161,20 @@ public class MenuFileController {
 
                         Remote.downloadArquivoLst(TableDatasDark.getValueAt(TableDatasDark.getSelectedRow(), 1).toString());
 
-                        SelectedFile = new File(Manager.getRoot().get("caminho_local_temp_darkFile"));
+                        SelectedFile = new File(Adaptador.getPastaTempFile());
 
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
                         LocalDate DataFt = LocalDate.parse(lblDtProd.getText(), formatter);
 
-                        new DarkDao(DataFt, SelectedFile, tbMainViewLst).carregarLista();
+                        if (Remote instanceof RemoteDarklistOperations) {
+                            new DarkDao(DataFt, SelectedFile, tbMainViewLst).carregarLista();
+
+                        } else {
+
+                            new WhiteDao(DataFt, SelectedFile, tbMainViewLst).carregarLista();
+
+                        }
 
                         Pbar.Progresso.setVisible(false);
 
@@ -177,49 +194,58 @@ public class MenuFileController {
 
     }
 
-    public static void inpecaoEventoCliqueList() throws Exception {
+    public void inpecaoEventoCliqueList() throws Exception {
 
         int row = TableDatasDark.getSelectedRow();
         String data = TableDatasDark.getValueAt(row, 0).toString();
 
         String dataP = DarklistManagerViewClient.lblDtProd.getText();
-        DarklistManagerViewClient.lblmode.setText("Darklist");
+        if (Remote instanceof RemoteDarklistOperations) {
+            DarklistManagerViewClient.lblmode.setText("Darklist");
+        } else {
+            DarklistManagerViewClient.lblmode.setText("WhiteList");
+
+        }
 
         if (!(data.equals(dataP))) {
 
-            acaoParaDarkRetroativo();
+            abrirVisualizacaoRetroativa();
 
         } else {
 
-            acaoParaLstAtual();
+            abrirListaCorrente();
 
         }
 
     }
 
-    public static void tableListListener() throws Exception {
+    public void tableListListener() throws Exception {
 
         Map<String, String> MapDark = Remote.obterListaArquivosDataArquivo();
+
+        TreeMap MapaOrdenado = new TreeMap(MapDark);
 
         SwingUtilities.invokeLater(() -> {
 
             DefaultTableModel tableModel = (DefaultTableModel) TableDatasDark.getModel();
 
-            MapDark.forEach((data, coluna) -> tableModel.addRow(new Object[]{data, coluna}));
+            MapaOrdenado.forEach((data, coluna) -> tableModel.addRow(new Object[]{data, coluna}));
 
         });
 
     }
 
-    public static void tableLogListener() throws Exception {
+    public void tableLogListener() throws Exception {
 
         Map<String, String> MapLog = Remote.obterListaArquivosLogDataArquivo();
+
+        TreeMap MapaOrdenado = new TreeMap(MapLog);
 
         SwingUtilities.invokeLater(() -> {
 
             DefaultTableModel tableModel = (DefaultTableModel) tbDataLog.getModel();
 
-            MapLog.forEach((data, coluna) -> tableModel.addRow(new Object[]{data, coluna}));
+            MapaOrdenado.forEach((data, coluna) -> tableModel.addRow(new Object[]{data, coluna}));
 
         });
 

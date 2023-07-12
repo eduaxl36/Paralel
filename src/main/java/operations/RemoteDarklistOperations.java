@@ -5,7 +5,6 @@
 package operations;
 
 import Util.MainTableUtil;
-import pathManager.Manager;
 import com.jcraft.jsch.JSchException;
 import flag.entidadeFlag;
 import java.io.File;
@@ -25,13 +24,13 @@ import org.apache.commons.io.FileUtils;
 import pathManager.Roots;
 import sftp.ConfiguracoesSFTPModel;
 import static viewClientDarklist.DarklistManagerViewClient.tbMainViewLst;
-import viewClientDarklist.FlagCreator;
 import viewClientDarklist.MenuFile;
 
 /**
  *
  * @author Eduardo.Fernando
  */
+
 public class RemoteDarklistOperations extends RemoteOperations {
 
 
@@ -71,7 +70,7 @@ public class RemoteDarklistOperations extends RemoteOperations {
 
                     Pbar.Progresso.setVisible(true);
 
-                    String arquivoSalvoLog = Manager.getRoot().get("caminho_local_temp_logFile") + DataProducao.replaceAll("-", "") + "_log.csv";
+                    String arquivoSalvoLog =  Roots.DARK_PASTA_TEMP_LOG_FILE.getCaminho() + DataProducao.replaceAll("-", "") + "_log.csv";
                     new MainTableUtil(Tabela).exportarConteudoParaCsv(arquivoSalvoLog);
                     uploadLogdia(DataProducao.replaceAll("-", ""));
 
@@ -95,10 +94,13 @@ public class RemoteDarklistOperations extends RemoteOperations {
     @Override
     public Map obterListaArquivosDataArquivo() throws InterruptedException, IOException, ParseException, Exception {
 
+        Map obterListaArquivo = Connection.obterListaArquivo(Roots.DARK_PASTA_FTP_DARKLIST.getCaminho());
+                
         return Connection.obterListaArquivo(Roots.DARK_PASTA_FTP_DARKLIST.getCaminho());
 
     }
 
+  
     @Override
     public Set<entidadeFlag> obterListaDeFlags(String dia) throws IOException {
 
@@ -114,7 +116,7 @@ public class RemoteDarklistOperations extends RemoteOperations {
             LocalDate DataAbertura = LocalDate.parse(tbMainViewLst.getValueAt(i, 1).toString());
             LocalDate DataFechamento = LocalDate.parse(tbMainViewLst.getValueAt(i, 2).toString());
 
-            if (!(result.equals("null"))) {
+            if ((result.contains("."))) {
 
                 Flags.add(
                         new entidadeFlag(
@@ -134,6 +136,45 @@ public class RemoteDarklistOperations extends RemoteOperations {
         return Flags;
     }
 
+    
+      @Override
+    public void contestarFlag(String Dia) throws IOException {
+
+        Set<entidadeFlag> flag = obterListaDeFlags(Dia);
+        new File(Roots.DARK_ARQUIVO_TEMP_FLAG.getCaminho()).delete();
+        ArrayList<entidadeFlag> list = new ArrayList<>(flag);
+        final String mensagem = String.format("""
+                                              Los cambios abajo fueron hechos en Darklist
+                                              
+                                              El user: %s 
+                                              Fecha del Darklist : %s
+                                              """, list.get(0).getAutor(), Dia);
+
+        FileUtils.write(new File(Roots.DARK_ARQUIVO_TEMP_FLAG.getCaminho()), mensagem, StandardCharsets.UTF_8, true);
+
+        flag.forEach(x -> {
+
+            try {
+
+                FileUtils.write(new File(Roots.DARK_ARQUIVO_TEMP_FLAG.getCaminho()),
+                        """
+                        
+                        Hogar: """ + x.getId() + "\n"
+                        + "Fecha Inicio: " + x.getDataAbertura() + "\n"
+                        + "Fecha Cerramiento:" + x.getDataFechamento() + "\n"
+                        + "Obs. : " + x.getComment() + "\n"
+                        + "Autor : " + x.getAutor() + "\n"
+                        + "Cambio Realizado : " + x.getTipoCambio() + "\n\n",
+                        StandardCharsets.UTF_8, true);
+            } catch (IOException ex) {
+      
+            }
+
+        });
+
+    }
+    
+    
     @Override
     public void gerarFlag(String Dia) throws IOException {
 
@@ -161,10 +202,10 @@ public class RemoteDarklistOperations extends RemoteOperations {
                         + "Fecha Cerramiento:" + x.getDataFechamento() + "\n"
                         + "Obs. : " + x.getComment() + "\n"
                         + "Autor : " + x.getAutor() + "\n"
-                        + "Cambio Relizado : " + x.getTipoCambio() + "\n\n",
+                        + "Cambio Realizado : " + x.getTipoCambio() + "\n\n",
                         StandardCharsets.UTF_8, true);
             } catch (IOException ex) {
-                Logger.getLogger(FlagCreator.class.getName()).log(Level.SEVERE, null, ex);
+      
             }
 
         });

@@ -5,7 +5,6 @@
 package operations;
 
 import Util.MainTableUtil;
-import pathManager.Manager;
 import com.jcraft.jsch.JSchException;
 import flag.entidadeFlag;
 import java.io.File;
@@ -25,7 +24,7 @@ import org.apache.commons.io.FileUtils;
 import pathManager.Roots;
 import sftp.ConfiguracoesSFTPModel;
 import static viewClientDarklist.DarklistManagerViewClient.tbMainViewLst;
-import viewClientDarklist.FlagCreator;
+
 import viewClientDarklist.MenuFile;
 
 /**
@@ -43,21 +42,21 @@ public class RemoteWhitelistOperations extends RemoteOperations {
     @Override
     public void downloadArquivoLogHistorico(String LogFile) throws Exception {
 
-        Connection.downloadArquivo(Roots.DARK_PASTA_FTP_LOG.getCaminho() + LogFile, Roots.DARK_PASTA_TEMP_LOG_FILE.getCaminho() + LogFile);
+        Connection.downloadArquivo(Roots.PASTA_FTP_LOG_WHITE.getCaminho() + LogFile, Roots.PASTA_TEMP_LOG_FILE_WHITE.getCaminho() + LogFile);
 
     }
 
     @Override
     public void uploadLogdia(String data) throws Exception {
 
-        Connection.uploadArquivo(Roots.DARK_PASTA_TEMP_LOG_FILE.getCaminho() + "/" + data + "_log.csv", Roots.DARK_PASTA_FTP_LOG.getCaminho() + "/" + data + "_log.csv");
+        Connection.uploadArquivo(Roots.PASTA_TEMP_LOG_FILE_WHITE.getCaminho() + "/" + data + "_log.csv", Roots.PASTA_FTP_LOG_WHITE.getCaminho() + "/" + data + "_log.csv");
 
     }
 
     @Override
     public Map obterListaArquivosLogDataArquivo() throws InterruptedException, IOException, ParseException, Exception {
 
-        return Connection.obterListaArquivo(Roots.DARK_PASTA_FTP_LOG.getCaminho());
+        return Connection.obterListaArquivo(Roots.PASTA_FTP_LOG_WHITE.getCaminho());
 
     }
 
@@ -71,7 +70,8 @@ public class RemoteWhitelistOperations extends RemoteOperations {
 
                     Pbar.Progresso.setVisible(true);
 
-                    String arquivoSalvoLog = Manager.getRoot().get("caminho_local_temp_logFile") + DataProducao.replaceAll("-", "") + "_log.csv";
+                    String arquivoSalvoLog = Roots.PASTA_TEMP_LOG_FILE_WHITE.getCaminho() + DataProducao.replaceAll("-", "") + "_log.csv";
+
                     new MainTableUtil(Tabela).exportarConteudoParaCsv(arquivoSalvoLog);
                     uploadLogdia(DataProducao.replaceAll("-", ""));
 
@@ -88,14 +88,15 @@ public class RemoteWhitelistOperations extends RemoteOperations {
     @Override
     public void downloadArquivoLst(String DarklistFile) throws Exception {
 
-        Connection.downloadArquivo(Roots.DARK_PASTA_FTP_DARKLIST.getCaminho() + DarklistFile, Roots.DARK_PASTA_TEMP_FILE.getCaminho());
+
+        Connection.downloadArquivo(Roots.PASTA_FTP_WHITE.getCaminho() + DarklistFile, Roots.PASTA_TEMP_FILE_WHITE.getCaminho());
 
     }
 
     @Override
     public Map obterListaArquivosDataArquivo() throws InterruptedException, IOException, ParseException, Exception {
 
-        return Connection.obterListaArquivo(Roots.DARK_PASTA_FTP_DARKLIST.getCaminho());
+        return Connection.obterListaArquivo(Roots.PASTA_FTP_WHITE.getCaminho());
 
     }
 
@@ -138,22 +139,22 @@ public class RemoteWhitelistOperations extends RemoteOperations {
     public void gerarFlag(String Dia) throws IOException {
 
         Set<entidadeFlag> flag = obterListaDeFlags(Dia);
-        new File(Roots.DARK_ARQUIVO_TEMP_FLAG.getCaminho()).delete();
+        new File(Roots.ARQUIVO_TEMP_FLAG_WHITE.getCaminho()).delete();
         ArrayList<entidadeFlag> list = new ArrayList<>(flag);
         final String mensagem = String.format("""
-                                              Solicitacion para el cambio en Darklist
+                                              Solicitacion para el cambio en Whitelist
                                               
                                               El user: %s 
-                                              Fecha del Darklist : %s
+                                              Fecha del Whitelist : %s
                                               """, list.get(0).getAutor(), Dia);
 
-        FileUtils.write(new File(Roots.DARK_ARQUIVO_TEMP_FLAG.getCaminho()), mensagem, StandardCharsets.UTF_8, true);
+        FileUtils.write(new File(Roots.ARQUIVO_TEMP_FLAG_WHITE.getCaminho()), mensagem, StandardCharsets.UTF_8, true);
 
         flag.forEach(x -> {
 
             try {
 
-                FileUtils.write(new File(Roots.DARK_ARQUIVO_TEMP_FLAG.getCaminho()),
+                FileUtils.write(new File(Roots.ARQUIVO_TEMP_FLAG_WHITE.getCaminho()),
                         """
                         
                         Hogar: """ + x.getId() + "\n"
@@ -164,38 +165,79 @@ public class RemoteWhitelistOperations extends RemoteOperations {
                         + "Cambio Relizado : " + x.getTipoCambio() + "\n\n",
                         StandardCharsets.UTF_8, true);
             } catch (IOException ex) {
-                Logger.getLogger(FlagCreator.class.getName()).log(Level.SEVERE, null, ex);
+            
             }
 
         });
 
     }
 
+    
+      @Override
+    public void contestarFlag(String Dia) throws IOException {
+
+        Set<entidadeFlag> flag = obterListaDeFlags(Dia);
+        new File(Roots.ARQUIVO_TEMP_FLAG_WHITE.getCaminho()).delete();
+        ArrayList<entidadeFlag> list = new ArrayList<>(flag);
+        final String mensagem = String.format("""
+                                              Los cambios abajo fueron hechos en Whitelist
+                                              
+                                              El user: %s 
+                                              Fecha del Darklist : %s
+                                              """, list.get(0).getAutor(), Dia);
+
+        FileUtils.write(new File(Roots.ARQUIVO_TEMP_FLAG_WHITE.getCaminho()), mensagem, StandardCharsets.UTF_8, true);
+
+        flag.forEach(x -> {
+
+            try {
+
+                FileUtils.write(new File(Roots.ARQUIVO_TEMP_FLAG_WHITE.getCaminho()),
+                        """
+                        
+                        Hogar: """ + x.getId() + "\n"
+                        + "Fecha Inicio: " + x.getDataAbertura() + "\n"
+                        + "Fecha Cerramiento:" + x.getDataFechamento() + "\n"
+                        + "Obs. : " + x.getComment() + "\n"
+                        + "Autor : " + x.getAutor() + "\n"
+                        + "Cambio Realizado : " + x.getTipoCambio() + "\n\n",
+                        StandardCharsets.UTF_8, true);
+            } catch (IOException ex) {
+      
+            }
+
+        });
+
+    }
+    
+    
+    
     @Override
     public void uploadFlag() throws Exception {
 
-        Connection.uploadArquivo(Roots.DARK_ARQUIVO_TEMP_FLAG.getCaminho(), Roots.DARK_PASTA_FTP_FLAG.getCaminho());
+        Connection.uploadArquivo(Roots.ARQUIVO_TEMP_FLAG_WHITE.getCaminho(), Roots.PASTA_FTP_FLAG_WHITE.getCaminho());
 
     }
 
     @Override
     public void uploadUltimoDiaDaListaLiteral(String data) throws Exception {
 
-        Connection.uploadArquivo(Roots.DARK_ARQUIVO_LST_SERVIDOR.getCaminho(), Roots.DARK_PASTA_FTP_DARKLIST.getCaminho() + "spdark.lst".replaceAll("spdark.lst", data + "_spdark.lst"));
+        Connection.uploadArquivo(Roots.ARQUIVO_LST_SERVIDOR_WHITE.getCaminho(), Roots.PASTA_FTP_WHITE.getCaminho() + "spwhite.lst".replaceAll("spwhite.lst", data + "_spwhite.lst"));
 
     }
 
     @Override
     public void uploadDiaProducaoNumeralLabel() throws Exception {
 
-        Connection.uploadArquivo(Roots.DARK_PRODUCAO_DIARIA_DIA_TEMP.getCaminho(), Roots.DARK_LITERAL_FTP_PRODUCAO_DIARIA.getCaminho());
+ 
+        Connection.uploadArquivo(Roots.PRODUCAO_DIARIA_DIA_TEMP_WHITE.getCaminho(), Roots.LITERAL_FTP_PRODUCAO_DIARIA_WHITE.getCaminho());
 
     }
 
     @Override
     public void downloadDiaProducaoNumeralLabel() throws Exception {
 
-        Connection.downloadArquivo(Roots.DARK_LITERAL_FTP_PRODUCAO_DIARIA.getCaminho(), Roots.DARK_PRODUCAO_DIARIA_DIA_TEMP.getCaminho());
+        Connection.downloadArquivo(Roots.LITERAL_FTP_PRODUCAO_DIARIA_WHITE.getCaminho(), Roots.PRODUCAO_DIARIA_DIA_TEMP_WHITE.getCaminho());
 
     }
 

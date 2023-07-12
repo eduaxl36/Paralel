@@ -4,12 +4,14 @@
  */
 package viewClientDarklist;
 
+import com.formdev.flatlaf.FlatDarkLaf;
 import controller.MainViewController;
 import controller.MenuFileController;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  *
@@ -17,21 +19,22 @@ import java.util.logging.Logger;
  */
 public final class MenuFile extends javax.swing.JFrame {
 
-    private MainViewController MainController;
-    
- 
+    private final MainViewController MainController;
+    private final MenuFileController MenuController;
+
     /**
      * Creates new form DarklistListFiles
+     *
+     * @throws java.lang.Exception
      */
     public MenuFile() throws Exception {
-        
+
         initComponents();
-        
-        MenuFileController.tableListListener();
-        MenuFileController.tableLogListener();
+UIManager.setLookAndFeel(new FlatDarkLaf());
         MainController = new MainViewController();
-         
-        
+        MenuController = new MenuFileController();
+        MenuController.tableListListener();
+        MenuController.tableLogListener();
 
     }
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -47,14 +50,19 @@ public final class MenuFile extends javax.swing.JFrame {
         tbDataLog = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Selecion de Archivos");
         setBackground(new java.awt.Color(255, 255, 255));
+        setResizable(false);
 
-        pnMain.setBackground(new java.awt.Color(255, 255, 255));
         pnMain.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         tbPane.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        tbPane.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                tbPanePropertyChange(evt);
+            }
+        });
 
-        jPanel1.setBackground(new java.awt.Color(204, 255, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         TableDatasDark.setAutoCreateRowSorter(true);
@@ -90,9 +98,8 @@ public final class MenuFile extends javax.swing.JFrame {
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 440, 210));
 
-        tbPane.addTab("Darklist's", jPanel1);
+        tbPane.addTab("Lista", jPanel1);
 
-        jPanel2.setBackground(new java.awt.Color(204, 255, 255));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         tbDataLog.setAutoCreateRowSorter(true);
@@ -128,7 +135,7 @@ public final class MenuFile extends javax.swing.JFrame {
 
         jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 440, 210));
 
-        tbPane.addTab("Cambio", jPanel2);
+        tbPane.addTab("Log", jPanel2);
 
         pnMain.add(tbPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 460, 260));
 
@@ -147,64 +154,43 @@ public final class MenuFile extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tbDataLogMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbDataLogMousePressed
+       
 
-  
         try {
-            
-              
+
+            DarklistManagerViewClient.lblmode.setText("Log View");
             MainController.carregarLogAlteracoes();
-            
             this.dispose();
-            // TODO add your handling code here:
+          
         } catch (Exception ex) {
-            Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
     }//GEN-LAST:event_tbDataLogMousePressed
+
 
     private void TableDatasDarkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TableDatasDarkMouseClicked
 
         try {
-            MenuFileController.inpecaoEventoCliqueList();
+
+            MenuController.inpecaoEventoCliqueList();
             DarklistManagerViewClient.btnView.setEnabled(true);
             this.dispose();
-            
-            // TODO add your handling code here:
+
         } catch (Exception ex) {
-            Logger.getLogger(MenuFile.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
     }//GEN-LAST:event_TableDatasDarkMouseClicked
+
+    private void tbPanePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tbPanePropertyChange
+
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tbPanePropertyChange
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MenuFile.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MenuFile.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MenuFile.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MenuFile.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
+    public static void main(String args[]) throws UnsupportedLookAndFeelException {
+ UIManager.setLookAndFeel(new FlatDarkLaf());
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
@@ -224,6 +210,6 @@ public final class MenuFile extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPanel pnMain;
     public static javax.swing.JTable tbDataLog;
-    private javax.swing.JTabbedPane tbPane;
+    public static javax.swing.JTabbedPane tbPane;
     // End of variables declaration//GEN-END:variables
 }

@@ -4,6 +4,11 @@
  */
 package operations;
 
+import Adapter.Adapter;
+import static Adapter.Adapter.Remote;
+import Adapter.AdapterDark;
+import Adapter.AdapterWhite;
+import Exporter.Exporter;
 import dao.LogDao;
 import java.io.File;
 import java.io.IOException;
@@ -12,14 +17,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
 import pathManager.Roots;
 import static viewClientDarklist.DarklistManagerViewClient.lblDtProd;
 import static viewClientDarklist.DarklistManagerViewClient.tbMainViewLst;
+
 /**
  *
  * @author eduardo.fernando
  */
+
 public class LocalDarklistOperations implements LocalOperations {
 
     @Override
@@ -53,11 +62,58 @@ public class LocalDarklistOperations implements LocalOperations {
 
     @Override
     public void carregarLog(String LogLocalFile) throws Exception {
-        
+
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyyMMdd");
 
         new LogDao(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), new File(LogLocalFile), tbMainViewLst)
                 .preencherTabela();
+
+    }
+
+    @Override
+    public void subirLabelCorrespondente() {
+
+        try {
+            Remote.uploadDiaProducaoNumeralLabel();
+        } catch (Exception ex) {
+            Logger.getLogger(LocalWhiteOperations.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    @Override
+    public void subirListaCorrespondente(String Dia) {
+
+        try {
+            Remote.uploadUltimoDiaDaListaLiteral(Dia);
+        } catch (Exception ex) {
+            Logger.getLogger(LocalDarklistOperations.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+    @Override
+    public void montarLista() {
+
+               try {
+                   
+            String Arquivo = new Exporter().montarDarkList(tbMainViewLst);       
+                   
+             FileUtils.writeStringToFile(new File("c:/teste/teste.txt"), Arquivo);
+             
+         } catch (IOException ex) {
+             Logger.getLogger(AdapterWhite.class.getName()).log(Level.SEVERE, null, ex);
+         }
+
+    }
+    
+    public static void main(String[] args) throws Exception {
+
+        Adapter aa = new AdapterDark();
+        aa.iniciaConexao();
+
+        new LocalDarklistOperations().criarDataProducao();
+        new LocalDarklistOperations().subirListaCorrespondente(new LocalWhiteOperations().captarUltimoDiaProducao());
+        new LocalDarklistOperations().subirLabelCorrespondente();
 
     }
 

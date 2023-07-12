@@ -5,14 +5,8 @@
 package viewClientDarklist;
 
 import controller.CloseModeController;
-import controller.MainViewController;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 /**
  *
@@ -20,35 +14,22 @@ import java.util.logging.Logger;
  */
 public class CloseMode extends javax.swing.JFrame {
 
-  
     CloseModeController Controller;
 
-    private final MainViewController MainController;
     public static boolean instanciaMudancaAdicao = false;
-
-
-
-    public static long calcularDiferencaEmMinutos(LocalDate data1, LocalDate data2) {
-        
-        LocalDateTime dateTime1 = LocalDateTime.of(data1, LocalTime.MIN);
-        LocalDateTime dateTime2 = LocalDateTime.of(data2, LocalTime.MIN);
-
-        return ChronoUnit.DAYS.between(dateTime1, dateTime2);
-    }
 
     /**
      * Creates new form CloseMode
+     *
      * @throws java.lang.Exception
      */
     public CloseMode() throws Exception {
-        
+
         initComponents();
 
         Controller = new CloseModeController();
 
-        MainController = new MainViewController();
-        
-        Controller.inicializacoes();
+        Controller.obterDadosSelecionadosTabela();
 
     }
 
@@ -81,8 +62,8 @@ public class CloseMode extends javax.swing.JFrame {
                 formWindowClosed(evt);
             }
         });
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        PnMain.setBackground(new java.awt.Color(255, 255, 255));
         PnMain.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         PnMain1.setBackground(new java.awt.Color(255, 255, 255));
@@ -170,25 +151,15 @@ public class CloseMode extends javax.swing.JFrame {
     jSeparator3.setForeground(new java.awt.Color(204, 204, 204));
     PnMain.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 220, 410, 10));
 
-    javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-    getContentPane().setLayout(layout);
-    layout.setHorizontalGroup(
-        layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addComponent(PnMain, javax.swing.GroupLayout.PREFERRED_SIZE, 406, javax.swing.GroupLayout.PREFERRED_SIZE)
-    );
-    layout.setVerticalGroup(
-        layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addComponent(PnMain, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
-    );
+    getContentPane().add(PnMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 406, 263));
 
     pack();
     }// </editor-fold>//GEN-END:initComponents
 
-  
+
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-       
-        Controller.cambiar();
+        Controller.realizarAlteracoes();
         this.dispose();
 
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -200,12 +171,9 @@ public class CloseMode extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_formWindowClosed
 
-  
-
     /**
      * @param args
      */
- 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

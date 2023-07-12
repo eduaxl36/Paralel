@@ -12,6 +12,7 @@ import java.io.FileReader;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -25,8 +26,7 @@ public class LogDao {
     private File LogFile;
     private JTable Tabela;
     private DefaultTableModel Modelo;
-    
-    
+
     public LogDao() {
 
     }
@@ -34,7 +34,7 @@ public class LogDao {
     public LogDao(LocalDate DataProducao, File LstFile) {
         this.DataProducao = DataProducao;
         this.LogFile = LstFile;
-        
+
         Modelo = (DefaultTableModel) Tabela.getModel();
     }
 
@@ -44,14 +44,11 @@ public class LogDao {
         this.Tabela = Tabela;
         Modelo = (DefaultTableModel) Tabela.getModel();
     }
-    
-    
-       
-    public void preencherTabela() throws Exception{
 
-        
+    public void preencherTabela() throws Exception {
+
         Modelo.setNumRows(0);
-        
+
         Logs().forEach(x -> {
 
             if (!(x.getAlteracaoRealizada().contains("a"))) {
@@ -89,13 +86,9 @@ public class LogDao {
         });
 
         new MainTableUtil(Tabela).ajustarFormataColunasTabelaConteudo();
-    
-    
+
     }
-    
-    
-    
- 
+
     public List<Log> Logs() throws Exception {
 
         List<Log> Darks = new ArrayList<>();
@@ -111,7 +104,7 @@ public class LogDao {
             Linha = bf.readLine();
 
         }
-        
+
         Darks.remove(0);
         return Darks;
     }
@@ -122,44 +115,36 @@ public class LogDao {
 
         if (RawLines[0].trim().matches("\\d{1,}")) {
 
- 
+            Long Domicilio = Long.valueOf(RawLines[0].trim());
+            String Abertura = RawLines[1].trim();
+            String Fechamento = RawLines[2].trim().replaceAll("(^\\-1$)", "20501231");
+            String Observacao = RawLines[3].trim();
+            boolean enDark = Boolean.parseBoolean(RawLines[4].trim());
+            String tipoCambio = RawLines[5].trim();
+            String LogAutor = RawLines[6].trim();
+            int dif = 0;
+            if (RawLines[7].trim().matches("\\d{1,}")) {
 
-                Long Domicilio = Long.valueOf(RawLines[0].trim());
-                String Abertura = RawLines[1].trim();
-                String Fechamento = RawLines[2].trim().replaceAll("(^\\-1$)", "20501231");
-                String Observacao = RawLines[3].trim();
-                boolean enDark = Boolean.parseBoolean(RawLines[4].trim());
-                String tipoCambio = RawLines[5].trim();
-                String LogAutor = RawLines[6].trim();
-                int dif = 0;
-                if (RawLines[7].trim().matches("\\d{1,}")) {
+                dif = Integer.parseInt(RawLines[7].trim());
 
-                    dif = Integer.parseInt(RawLines[7].trim());
+            }
 
-                }
+            String AcaoCapturada = RawLines[8].trim();
 
-                String AcaoCapturada = RawLines[8].trim();
-
-                
-                return new Log(
-                        Domicilio,
-                        LocalDate.parse(Abertura),
-                        LocalDate.parse(Fechamento),
-                        Observacao,
-                        enDark,
-                        tipoCambio,
-                        LogAutor,
-                        dif,
-                        AcaoCapturada);
-
-            
+            return new Log(
+                    Domicilio,
+                    LocalDate.parse(Abertura),
+                    LocalDate.parse(Fechamento),
+                    Observacao,
+                    enDark,
+                    tipoCambio,
+                    LogAutor,
+                    dif,
+                    AcaoCapturada);
 
         }
 
         return null;
     }
-
-  
-
 
 }

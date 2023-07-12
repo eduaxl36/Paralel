@@ -4,7 +4,9 @@
  */
 package Util;
 
+import static Adapter.Adapter.Remote;
 import dao.DarkDao;
+import dao.WhiteDao;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -17,7 +19,6 @@ import java.time.format.DateTimeFormatter;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -28,6 +29,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
+import operations.RemoteDarklistOperations;
+import static viewClientDarklist.DarklistManagerViewClient.ValidadorAdm;
 import static viewClientDarklist.DarklistManagerViewClient.lblDtProd;
 
 /**
@@ -136,8 +139,19 @@ public final class MainTableUtil {
 
         MenuItem4.addActionListener((ActionEvent e) -> Tabela.setValueAt("Cambio Aprovado", Tabela.getSelectedRow(), 5));
 
-        MenuItem4.setEnabled(AprovacaoCambio);
+       
 
+        if(ValidadorAdm==false){
+        
+        MenuItem4.setEnabled(false);
+        
+        }
+        else{
+        
+         MenuItem4.setEnabled(AprovacaoCambio);
+        
+        }
+        
         MenuItem3.setEnabled(AprovacaoNuevaLinea);
 
         MenuItem2.setEnabled(NegarCambio);
@@ -168,9 +182,9 @@ public final class MainTableUtil {
         this.numeroFinal = NumeroFinal;
         this.numeroIncremental = NumeroIncremental;
         
+       if(Remote instanceof RemoteDarklistOperations){
        
-        
-        new DarkDao(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), ArquivoSelecionado,Tabela).getStatus().forEach((var x) -> {
+               new DarkDao(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), ArquivoSelecionado,Tabela).getStatus().forEach((var x) -> {
 
             if (x != null && x.getId() != 0) {
 
@@ -182,6 +196,29 @@ public final class MainTableUtil {
 
             numeroIncremental++;
         });
+       
+       }
+       else{
+       
+              new WhiteDao(LocalDate.parse(lblDtProd.getText(), fmt).plusDays(1), ArquivoSelecionado,Tabela).getStatus().forEach((var x) -> {
+
+            if (x != null && x.getId() != 0) {
+
+                if (x.getId() == Dom && DataAbertura.isEqual(x.getDataAbertura())) {
+                    numeroFinal = numeroIncremental;
+                }
+
+            }
+
+            numeroIncremental++;
+        });     
+       
+       
+       
+       
+       }
+        
+
         return numeroFinal;
 
     }

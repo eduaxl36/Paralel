@@ -4,28 +4,16 @@
  */
 package viewClientDarklist;
 
+import com.formdev.flatlaf.FlatDarkLaf;
+import controller.ViewDarkAddController;
 
-import com.formdev.flatlaf.FlatLightLaf;
-import controller.ViewDarkController;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import javax.swing.table.DefaultTableModel;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JDialog;
-import javax.swing.JOptionPane;
-import static viewClientDarklist.DarklistManagerViewClient.lblDtProd;
-import static viewClientDarklist.DarklistManagerViewClient.tbMainViewLst;
-
-
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 
 /**
@@ -37,23 +25,19 @@ public class ViewDarkAdd extends javax.swing.JFrame {
     /**
      * Creates new form DarklistDetail
      */
-    
-    JDialog modalDialo;
-    ViewDarkController ControllerAdd;
-    
+    private final JDialog modalDialog;
+    private final ViewDarkAddController ControllerAdd;
+
     public static boolean instanciaAbertaAdicao = false;
-    
-    
-    
-    public ViewDarkAdd() {
+
+    public ViewDarkAdd() throws UnsupportedLookAndFeelException {
         initComponents();
-        FlatLightLaf.install();
-        String username = System.getProperty("user.name");
-        lblUserName.setText(username);
-        JDialog modalDialog = new JDialog();
+
+        UIManager.setLookAndFeel(new FlatDarkLaf());
+        modalDialog = new JDialog();
         modalDialog.setModal(true);
-        ControllerAdd = new ViewDarkController();
-        
+
+        ControllerAdd = new ViewDarkAddController();
         
 
     }
@@ -76,7 +60,6 @@ public class ViewDarkAdd extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JSeparator();
         jButton1 = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JSeparator();
-        jSeparator3 = new javax.swing.JSeparator();
         finalHouseHoldDate = new datechooser.beans.DateChooserCombo();
         InitialHouseHoldDate = new datechooser.beans.DateChooserCombo();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -94,30 +77,21 @@ public class ViewDarkAdd extends javax.swing.JFrame {
             }
         });
 
-        pn.setBackground(new java.awt.Color(255, 255, 255));
-        pn.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
         jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/darklist.png"))); // NOI18N
         jLabel1.setText("+ DARKLIST");
-        pn.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 20, 180, 30));
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/casa.png"))); // NOI18N
         jLabel2.setText("   Hogar");
-        pn.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 70, 160, 30));
-        pn.add(Txt_HouseHold, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 110, 160, 30));
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/datainicio.png"))); // NOI18N
         jLabel3.setText("  Inicio");
-        pn.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 150, 160, 30));
 
         jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/datafinal.png"))); // NOI18N
         jLabel4.setText("   Cerramiento");
-        pn.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 240, 160, 20));
 
         jSeparator1.setBackground(new java.awt.Color(204, 204, 204));
         jSeparator1.setForeground(new java.awt.Color(204, 204, 204));
-        pn.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 60, 340, 20));
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/add.png"))); // NOI18N
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -125,18 +99,11 @@ public class ViewDarkAdd extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
-        pn.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 340, 40, 40));
 
         jSeparator2.setBackground(new java.awt.Color(204, 204, 204));
         jSeparator2.setForeground(new java.awt.Color(204, 204, 204));
-        pn.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 390, 310, 10));
-
-        jSeparator3.setBackground(new java.awt.Color(204, 204, 204));
-        jSeparator3.setForeground(new java.awt.Color(204, 204, 204));
-        pn.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 8, 340, 20));
 
         finalHouseHoldDate.setLocale(new java.util.Locale("pt", "BR", ""));
-        pn.add(finalHouseHoldDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 280, 160, -1));
 
         InitialHouseHoldDate.setCurrentView(new datechooser.view.appearance.AppearancesList("Swing",
             new datechooser.view.appearance.ViewAppearance("custom",
@@ -182,159 +149,107 @@ public class ViewDarkAdd extends javax.swing.JFrame {
     InitialHouseHoldDate.setLocale(new java.util.Locale("pt", "BR", ""));
     InitialHouseHoldDate.setBehavior(datechooser.model.multiple.MultyModelBehavior.SELECT_SINGLE);
     InitialHouseHoldDate.setShowOneMonth(true);
-    pn.add(InitialHouseHoldDate, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 200, 160, -1));
 
     TxtComment.setColumns(20);
     TxtComment.setRows(5);
     jScrollPane1.setViewportView(TxtComment);
 
-    pn.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 320, 160, 60));
-
     lblUserName.setText("TESTE");
-    pn.add(lblUserName, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 400, 160, 30));
 
     jLabel6.setText("Cambiado Por  : ");
-    pn.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 400, 90, 30));
+
+    javax.swing.GroupLayout pnLayout = new javax.swing.GroupLayout(pn);
+    pn.setLayout(pnLayout);
+    pnLayout.setHorizontalGroup(
+        pnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addComponent(jSeparator1)
+        .addComponent(jSeparator2)
+        .addGroup(pnLayout.createSequentialGroup()
+            .addGroup(pnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pnLayout.createSequentialGroup()
+                    .addGap(72, 72, 72)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(pnLayout.createSequentialGroup()
+                    .addGap(61, 61, 61)
+                    .addGroup(pnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(Txt_HouseHold, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(InitialHouseHoldDate, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(finalHouseHoldDate, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(pnLayout.createSequentialGroup()
+                    .addGap(26, 26, 26)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(20, 20, 20)
+                    .addComponent(lblUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addContainerGap(37, Short.MAX_VALUE))
+    );
+    pnLayout.setVerticalGroup(
+        pnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        .addGroup(pnLayout.createSequentialGroup()
+            .addContainerGap()
+            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(10, 10, 10)
+            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(1, 1, 1)
+            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(10, 10, 10)
+            .addComponent(Txt_HouseHold, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(10, 10, 10)
+            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(20, 20, 20)
+            .addComponent(InitialHouseHoldDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(18, 18, 18)
+            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(20, 20, 20)
+            .addComponent(finalHouseHoldDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(18, 18, 18)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(10, 10, 10)
+            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGap(18, 18, 18)
+            .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 9, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+            .addGroup(pnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addContainerGap())
+    );
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addComponent(pn, javax.swing.GroupLayout.PREFERRED_SIZE, 308, Short.MAX_VALUE)
+        .addComponent(pn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
     );
     layout.setVerticalGroup(
         layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addComponent(pn, javax.swing.GroupLayout.PREFERRED_SIZE, 438, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addComponent(pn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
     );
 
     pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public static void removeTableLine() {
-
-        DefaultTableModel df = (DefaultTableModel) tbMainViewLst.getModel();
-
-        df.removeRow(tbMainViewLst.getSelectedRow());
-
-    }
-
-    public static long calcularDiferencaEmMinutos(LocalDate data1, LocalDate data2) {
-        LocalDateTime dateTime1 = LocalDateTime.of(data1, LocalTime.MIN);
-        LocalDateTime dateTime2 = LocalDateTime.of(data2, LocalTime.MIN);
-
-        return ChronoUnit.DAYS.between(dateTime1, dateTime2);
-    }
-
-    public  boolean addLineOneTable() throws ParseException {
-
-        DefaultTableModel df = (DefaultTableModel) tbMainViewLst.getModel();
-
-        LocalDate datainicial = LocalDate.parse(InitialHouseHoldDate.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        String TreatedInitialDate = datainicial.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-        LocalDate datafinal = LocalDate.parse(finalHouseHoldDate.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        String TreatedFinalDate = datafinal.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-
-        Date RawProductionDate = new SimpleDateFormat("yyyyMMdd").parse(lblDtProd.getText());
-
-        LocalDate ProducionDate = RawProductionDate.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();
-
-        boolean allowInsertion = datainicial.isAfter(ProducionDate) || datainicial.equals(ProducionDate);
-
-        if (!allowInsertion) {
-
-            
-            JOptionPane.showMessageDialog(null, "No se puede inserir un hogar\ncon una fecha inferior al produccion -4(dias) atual!", "Erro al añadir", JOptionPane.ERROR_MESSAGE);
-
-            
-        } else {
-
-            boolean deniedInsertion = datafinal.isBefore(datainicial);
-
-            if (deniedInsertion) {
-
-                JOptionPane.showMessageDialog(null, "La fecha final no puede ser inferior al fecha de inicial!", "Error al añadir", JOptionPane.ERROR_MESSAGE);
-
-            } else {
-
-                DateTimeFormatter dfw = DateTimeFormatter.ofPattern("yyyyMMdd");
-
-                boolean ValidadorExistencia = ControllerAdd.validarSeProucaoJaFoi(Long.parseLong(Txt_HouseHold.getText()));
-                
-                if (ValidadorExistencia == false) {
-
-                    df.addRow(new Object[]{
-                        Txt_HouseHold.getText(),
-                        TreatedInitialDate,
-                        TreatedFinalDate,
-                        "\"" + TxtComment.getText() + "\"",
-                        true,
-                        "Nueva Linea/En Aprobacion",
-                        lblUserName.getText(),
-                        calcularDiferencaEmMinutos(LocalDate.parse(lblDtProd.getText(), dfw), datafinal),
-                        "Hogar puesto en Darklist"
-
-                    });
-
-                    return true;
-                } else {
-
-                    JOptionPane.showMessageDialog(null, "El hogar selecioando ya esta presente en darklist con el status true!", "Error al añadir", JOptionPane.ERROR_MESSAGE);
-
-                }
-
-            }
-
-        }
-
-        return false;
-    }
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 
-             int resposta = JOptionPane.showConfirmDialog(modalDialo, "Desea añadir el logar en darklist?", 
-                     "Confirmacion", 
-                     JOptionPane.YES_OPTION);
-        
-        if (resposta == JOptionPane.YES_OPTION) {
-            // Caso a opção selecionada seja "Sim"
-                 
         try {
-
-            if (!addLineOneTable()) {
-
-                
-                
-            } else {
-
-                this.setVisible(false);
-                instanciaAbertaAdicao=false;
-
-            }
-
-            // TODO add your handling code here:
-        } catch (ParseException ex) {
+            ControllerAdd.acionaAdicaoValidada();
+            this.setVisible(false);
+          
+        } catch (Exception ex) {
             Logger.getLogger(ViewDarkAdd.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        } else if (resposta == JOptionPane.NO_OPTION) {
- 
-            JOptionPane.showMessageDialog(null, "Você selecionou 'Não'.");
-            
-           
-        
-        
-        }
-  
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
 
-            instanciaAbertaAdicao=false;
-
-
+        instanciaAbertaAdicao = false;
 
         // TODO add your handling code here:
     }//GEN-LAST:event_formWindowClosed
@@ -342,37 +257,15 @@ public class ViewDarkAdd extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ViewDarkAdd.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ViewDarkAdd.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ViewDarkAdd.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ViewDarkAdd.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
+    public static void main(String args[]) throws UnsupportedLookAndFeelException {
+    UIManager.setLookAndFeel(new FlatDarkLaf());
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ViewDarkAdd().setVisible(true);
+                try {
+                    new ViewDarkAdd().setVisible(true);
+                } catch (UnsupportedLookAndFeelException ex) {
+                    Logger.getLogger(ViewDarkAdd.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -391,7 +284,6 @@ public class ViewDarkAdd extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JSeparator jSeparator3;
     public static javax.swing.JLabel lblUserName;
     private javax.swing.JPanel pn;
     // End of variables declaration//GEN-END:variables

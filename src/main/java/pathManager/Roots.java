@@ -25,18 +25,18 @@ public enum Roots {
     DARK_PASTA_FTP_FLAG(Manager.getRoot().get("caminho_ftp_flag"),"DARKLIST"), 
     
     
-    DARK_PRODUCAO_DIARIA_DIA_TEMP_WHITE(Manager.getRoot().get("caminho_local_temp_producao_dia_white"),"WHITE"),
-    DARK_PASTA_TEMP_LOG_FILE_WHITE(Manager.getRoot().get("caminho_local_temp_logFile_white"),"WHITE"),
-    DARK_PASTA_TEMP_FILE_WHITE(Manager.getRoot().get("caminho_local_temp_darkFile_white"),"WHITE"),
-    DARK_ARQUIVO_TEMP_FLAG_WHITE(Manager.getRoot().get("caminho_local_temp_flag_white"),"WHITE"),
-    DARK_ARQUIVO_LST_SERVIDOR_WHITE(Manager.getRoot().get("caminho_oficial_temp_darkFile_servidor_white"),"WHITE"),
-    DARK_PASTA_LST_SERVIDOR_WHITE(Manager.getRoot().get("caminho_oficial_temp_darkFile_folder_only_servidor_white"),"WHITE"),
-    DARK_PASTA_PRODUCAO_OFICIAL_WHITE(Manager.getRoot().get("caminho_oficial_out_telepanel_panama_servidor_white"),"WHITE"),
-    DARK_PASTA_FTP_PRODUCAO_DIARIA_WHITE(Manager.getRoot().get("caminho_ftp_producao_dia_white"),"WHITE"),
-    DARK_LITERAL_FTP_PRODUCAO_DIARIA_WHITE(Manager.getRoot().get("caminho_ftp_producao_dia_completo_arquivo_white"),"WHITE"),
-    DARK_PASTA_FTP_DARKLIST_WHITE(Manager.getRoot().get("caminho_ftp_darklist_white"),"WHITE"),
-    DARK_PASTA_FTP_LOG_WHITE(Manager.getRoot().get("caminho_ftp_log_white"),"WHITE"),
-    DARK_PASTA_FTP_FLAG_WHITE(Manager.getRoot().get("caminho_ftp_flag_white"),"WHITE");  
+    PRODUCAO_DIARIA_DIA_TEMP_WHITE(Manager.getRoot().get("caminho_local_temp_producao_dia_white"),"WHITE"),
+    PASTA_TEMP_LOG_FILE_WHITE(Manager.getRoot().get("caminho_local_temp_logFile_white"),"WHITE"),
+    PASTA_TEMP_FILE_WHITE(Manager.getRoot().get("caminho_local_temp_white"),"WHITE"),
+    ARQUIVO_TEMP_FLAG_WHITE(Manager.getRoot().get("caminho_local_temp_flag_white"),"WHITE"),
+    ARQUIVO_LST_SERVIDOR_WHITE(Manager.getRoot().get("caminho_oficial_temp_darkFile_servidor_white"),"WHITE"),
+    PASTA_LST_SERVIDOR_WHITE(Manager.getRoot().get("caminho_oficial_temp_darkFile_folder_only_servidor_white"),"WHITE"),
+    PASTA_PRODUCAO_OFICIAL_WHITE(Manager.getRoot().get("caminho_oficial_out_telepanel_panama_servidor_white"),"WHITE"),
+    PASTA_FTP_PRODUCAO_DIARIA_WHITE(Manager.getRoot().get("caminho_ftp_producao_dia_white"),"WHITE"),
+    LITERAL_FTP_PRODUCAO_DIARIA_WHITE(Manager.getRoot().get("caminho_ftp_producao_dia_completo_arquivo_white"),"WHITE"),
+    PASTA_FTP_WHITE(Manager.getRoot().get("caminho_ftp_darklist_white"),"WHITE"),
+    PASTA_FTP_LOG_WHITE(Manager.getRoot().get("caminho_ftp_log_white"),"WHITE"),
+    PASTA_FTP_FLAG_WHITE(Manager.getRoot().get("caminho_ftp_flag_white"),"WHITE");  
     
     
     

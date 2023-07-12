@@ -4,7 +4,9 @@
  */
 package viewClientDarklist;
 
-
+import Adapter.Adapter;
+import Adapter.AdapterDark;
+import Adapter.AdapterWhite;
 import com.formdev.flatlaf.FlatDarkLaf;
 import controller.MainViewController;
 import java.awt.event.KeyEvent;
@@ -12,8 +14,7 @@ import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
-import sftp.Inicializacao;
-import static sftp.Inicializacao.Remote;
+
 
 /**
  *
@@ -21,19 +22,25 @@ import static sftp.Inicializacao.Remote;
  */
 public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
-   
-
     private MainViewController Controller;
 
+    public static Adapter Adaptador;
 
+    public static boolean ValidadorAdm = true;
 
     public DarklistManagerViewClient() throws IOException, Exception {
 
- 
+      
+        
         initComponents();
+        
         Controller = new MainViewController();
 
-       
+        if (ValidadorAdm == false) {
+
+            btnExport.setEnabled(false);
+
+        }
 
     }
 
@@ -48,6 +55,7 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
         dateChooserCombo1 = new datechooser.beans.DateChooserCombo();
         jMenuItem1 = new javax.swing.JMenuItem();
+        Grupo = new javax.swing.ButtonGroup();
         MainPn = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbMainViewLst = new javax.swing.JTable();
@@ -60,11 +68,15 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
         lblDtProd = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         btnView = new javax.swing.JButton();
+        Rbwhite = new javax.swing.JRadioButton();
+        RbDark = new javax.swing.JRadioButton();
+        btnExport = new javax.swing.JButton();
 
         jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pd.png"))); // NOI18N
         jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Cambio de Listagens 1.0");
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
@@ -153,34 +165,73 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
             }
         });
 
+        Grupo.add(Rbwhite);
+        Rbwhite.setForeground(new java.awt.Color(255, 51, 51));
+        Rbwhite.setText("       Whitelist");
+        Rbwhite.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                RbwhiteItemStateChanged(evt);
+            }
+        });
+
+        Grupo.add(RbDark);
+        RbDark.setForeground(new java.awt.Color(255, 51, 51));
+        RbDark.setSelected(true);
+        RbDark.setText("       Darklist");
+        RbDark.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                RbDarkItemStateChanged(evt);
+            }
+        });
+
+        btnExport.setBackground(new java.awt.Color(255, 255, 255));
+        btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/export.png"))); // NOI18N
+        btnExport.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        btnExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(94, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblDtProd, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(cbTipo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txt_filtro, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 301, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(btnUpload, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(40, 40, 40)
-                                .addComponent(btnOpenFile, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(41, 41, 41)
-                                .addComponent(btnView, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 398, Short.MAX_VALUE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(btnUpload, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnOpenFile, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnExport, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(btnView, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addGap(28, 28, 28)
+                                        .addComponent(lblmode, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(28, 28, 28)
-                                .addComponent(lblmode, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(95, 95, 95))
+                                .addGap(41, 41, 41)
+                                .addComponent(RbDark, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Rbwhite, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 395, Short.MAX_VALUE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblDtProd, javax.swing.GroupLayout.PREFERRED_SIZE, 176, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(40, 40, 40))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -191,11 +242,18 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
                             .addComponent(lblmode))
-                        .addGap(34, 34, 34)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnOpenFile, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnUpload, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnView, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(Rbwhite)
+                                    .addComponent(RbDark))
+                                .addGap(1, 1, 1)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(btnOpenFile, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btnUpload, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btnView, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(btnExport, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(17, 17, 17)
                         .addComponent(cbTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -217,7 +275,7 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
                 .addGroup(MainPnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane1))
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
         MainPnLayout.setVerticalGroup(
             MainPnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -250,22 +308,15 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
 
     private void btnUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadActionPerformed
-        try {
-            Controller = new MainViewController();
-            Controller.abrirFlagView();
-            Remote.uploadLogAlteracoes(tbMainViewLst, lblDtProd.getText());
-            Remote.uploadFlag();
-        } catch (Exception ex) {
-            Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+           Controller.acaoLoadAlteracoes();
+    
 
     }//GEN-LAST:event_btnUploadActionPerformed
 
 
     private void btnOpenFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenFileActionPerformed
         try {
-            Controller = new MainViewController();
+
             Controller.abrirMenuArquivos();
         } catch (Exception ex) {
             Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -275,7 +326,7 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
     private void btnViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewActionPerformed
         try {
-            Controller = new MainViewController();
+
             Controller.abrirFlagView();
         } catch (Exception ex) {
             Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -291,7 +342,7 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
     private void tbMainViewLstMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbMainViewLstMouseClicked
         try {
-            Controller = new MainViewController();
+
             Controller.verificaCliquesTabelaAcoes(evt);
         } catch (Exception ex) {
             Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -309,7 +360,7 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
             if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
                 Controller.filtrarTabelaCriterio();
             }
-            
+
             // TODO add your handling code here:
         } catch (Exception ex) {
             Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -318,9 +369,9 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
     private void txt_filtroKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_filtroKeyTyped
         try {
-            Controller = new MainViewController();
+
             Controller.filtrarTabelaCriterio();
-            
+
             // TODO add your handling code here:
         } catch (Exception ex) {
             Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -332,36 +383,85 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
     }//GEN-LAST:event_formWindowOpened
 
+    private void RbDarkItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_RbDarkItemStateChanged
+
+        try {
+            
+            Adaptador = new AdapterDark();
+            
+            Adaptador.iniciaConexao();
+           
+
+            // TODO add your handling code here:
+        } catch (Exception ex) {
+            Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_RbDarkItemStateChanged
+
+    private void RbwhiteItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_RbwhiteItemStateChanged
+
+        try {
+            
+            Adaptador = new AdapterWhite();
+            Adaptador.iniciaConexao();
+    
+            // TODO add your handling code here:
+        } catch (Exception ex) {
+            Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        // TODO add your handling code here:
+    }//GEN-LAST:event_RbwhiteItemStateChanged
+
+    private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
+
+               int resposta = JOptionPane.showConfirmDialog(null, "Deseja exportar o arquivo para lista correspondente?",
+                "Confirmacion",
+                JOptionPane.YES_OPTION);
+
+        if (resposta == JOptionPane.YES_OPTION) {
+        
+         Controller.atualizarLista();
+        
+        }
+       
+
+    }//GEN-LAST:event_btnExportActionPerformed
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
 
         try {
-            UIManager.setLookAndFeel(new FlatDarkLaf());
-            java.awt.EventQueue.invokeLater(new Runnable() {
-                public void run() {
+             UIManager.setLookAndFeel(new FlatDarkLaf());
+        
+            
+            java.awt.EventQueue.invokeLater(() -> {
+                try {
+                    Adaptador = new AdapterDark();
 
-                    try {
-                        Inicializacao.iniciaConexao();
-                        new DarklistManagerViewClient().setVisible(true);
+                    Adaptador.iniciaConexao();
 
-                    } catch (Exception ex) {
+                    new DarklistManagerViewClient().setVisible(true);
 
-                    }
-
+                } catch (Exception ex) {
                 }
             });
-        } catch (Exception ex) {
+        } catch (UnsupportedLookAndFeelException ex) {
 
         }
 
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup Grupo;
     private javax.swing.JPanel MainPn;
+    public static javax.swing.JRadioButton RbDark;
+    public static javax.swing.JRadioButton Rbwhite;
+    public static javax.swing.JButton btnExport;
     private javax.swing.JButton btnOpenFile;
-    private javax.swing.JButton btnUpload;
+    public static javax.swing.JButton btnUpload;
     public static javax.swing.JButton btnView;
     public static javax.swing.JComboBox<String> cbTipo;
     private datechooser.beans.DateChooserCombo dateChooserCombo1;

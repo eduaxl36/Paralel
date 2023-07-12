@@ -320,38 +320,38 @@ public class UtilTable {
 
     }
 
-    public void exportarConteudoParaCsv(String filePath) {
-
-        try (FileWriter writer = new FileWriter(filePath)) {
-            TableModel model = Tabela.getModel();
-            int rowCount = model.getRowCount();
-            int columnCount = model.getColumnCount();
-
-            // Escrever os nomes das colunas
-            for (int column = 0; column < columnCount; column++) {
-                writer.append(model.getColumnName(column));
-                if (column < columnCount - 1) {
-                    writer.append(";");
-                }
-            }
-            writer.append("\n");
-
-            // Escrever os dados das c�lulas
-            for (int row = 0; row < rowCount; row++) {
-                for (int column = 0; column < columnCount; column++) {
-                    writer.append(String.valueOf(model.getValueAt(row, column)));
-                    if (column < columnCount - 1) {
-                        writer.append(";");
-                    }
-                }
-                writer.append("\n");
-            }
-
-            System.out.println("JTable exportado para CSV com sucesso!");
-        } catch (IOException e) {
-            System.out.println("Erro ao exportar JTable para CSV: " + e.getMessage());
-        }
-    }
+//    public void exportarConteudoParaCsv(String filePath) {
+//
+//        try (FileWriter writer = new FileWriter(filePath)) {
+//            TableModel model = Tabela.getModel();
+//            int rowCount = model.getRowCount();
+//            int columnCount = model.getColumnCount();
+//
+//            // Escrever os nomes das colunas
+//            for (int column = 0; column < columnCount; column++) {
+//                writer.append(model.getColumnName(column));
+//                if (column < columnCount - 1) {
+//                    writer.append(";");
+//                }
+//            }
+//            writer.append("\n");
+//
+//            // Escrever os dados das c�lulas
+//            for (int row = 0; row < rowCount; row++) {
+//                for (int column = 0; column < columnCount; column++) {
+//                    writer.append(String.valueOf(model.getValueAt(row, column)));
+//                    if (column < columnCount - 1) {
+//                        writer.append(";");
+//                    }
+//                }
+//                writer.append("\n");
+//            }
+//
+//            System.out.println("JTable exportado para CSV com sucesso!");
+//        } catch (IOException e) {
+//            System.out.println("Erro ao exportar JTable para CSV: " + e.getMessage());
+//        }
+//    }
 
     public void ajustarFormataColunasTabelaConteudo() {
 

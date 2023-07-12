@@ -15,5 +15,13 @@ public interface LocalOperations {
     public void criarDataProducao() throws Exception;
 
     public void carregarLog(String LogLocalFile) throws Exception;
+    
+    public void subirListaCorrespondente(String Dia);
+    
+    public void subirLabelCorrespondente();
+    
+    public void montarLista();
+
+    
 
 }

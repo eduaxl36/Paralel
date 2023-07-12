@@ -123,9 +123,11 @@ public class DarkDao extends LstDao {
      */
     @Override
     public void carregarLista() throws IOException, Exception {
-
+        
+      
         Modelo = (DefaultTableModel) Tabela.getModel();
         Modelo.setNumRows(0);
+        
 
         getStatus().forEach((var x) -> {
 

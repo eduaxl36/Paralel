@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import static viewClientDarklist.DarklistManagerViewClient.tbMainViewLst;
@@ -64,7 +65,7 @@ public class WhiteDao extends LstDao {
             String Observacao = RawLines[5].trim();
 
             byte[] bytes = Observacao.getBytes(Charset.forName("ISO-8859-1"));
-            String observacaoANSI = new String(bytes, Charset.forName("UTF-8"));
+           
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
             LocalDate AberturaAsLc = LocalDate.parse(Abertura, formatter);
@@ -74,7 +75,7 @@ public class WhiteDao extends LstDao {
                     Domicilio,
                     AberturaAsLc,
                     FechamentoAsLc,
-                    observacaoANSI,
+                    Observacao,
                     verificartSeEstaEmLista(AberturaAsLc, FechamentoAsLc)
             );
 
@@ -86,8 +87,10 @@ public class WhiteDao extends LstDao {
     @Override
     public List<Whitelist> Listas() throws FileNotFoundException, IOException {
 
-        List<Whitelist> Darks = new ArrayList<>();
+        List<Whitelist> Whites = new ArrayList<>();
 
+        
+        
         FileReader Fr = new FileReader(this.ListFile);
         BufferedReader bf = new BufferedReader(Fr);
         String Linha = bf.readLine();
@@ -96,7 +99,7 @@ public class WhiteDao extends LstDao {
 
             if (!(Linha.contains("[NumItems]"))) {
 
-                Darks.add(retornaObjetoLst(Linha));
+                Whites.add(retornaObjetoLst(Linha));
 
             }
 
@@ -104,16 +107,18 @@ public class WhiteDao extends LstDao {
 
         }
 
-        return Darks;
+         
+        
+        return Whites;
     }
 
     @Override
     public List<Whitelist> getStatus() throws IOException {
 
-        List<Whitelist> Darks = Listas().stream()
+        List<Whitelist> Whites = Listas().stream()
                 .collect(Collectors.toList());
 
-        return Darks;
+        return Whites;
 
     }
 
@@ -125,6 +130,9 @@ public class WhiteDao extends LstDao {
     @Override
     public void carregarLista() throws IOException, Exception {
 
+        
+     
+        
         Modelo = (DefaultTableModel) Tabela.getModel();
         Modelo.setNumRows(0);
 
@@ -140,6 +148,7 @@ public class WhiteDao extends LstDao {
 
                 }
 
+                
                 Modelo.addRow(new Object[]{
                     x.getId(),
                     x.getDataAbertura(),

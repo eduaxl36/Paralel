@@ -102,7 +102,7 @@ public class SFTPConnection extends FTPService {
 
     @Override
     public void downloadArquivo(String Remoto, String Local) throws SftpException, JSchException, InterruptedException {
-
+        
         this.Canal.get(Remoto, Local);
 
     }

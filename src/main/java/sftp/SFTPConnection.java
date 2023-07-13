@@ -213,6 +213,14 @@ public class SFTPConnection extends FTPService {
         return true;
 
     }
+        public void delete(String CaminhoRemoto) throws SftpException, JSchException, InterruptedException {
+      
+          
+        this.Canal.rm(CaminhoRemoto);
+
+    }
+    
+    
 
     @Override
     public void getValidConexion() throws Exception {
@@ -233,6 +241,30 @@ public class SFTPConnection extends FTPService {
         }
         System.out.println("Sessao desconectada com sucesso!");
 
+    }
+    
+    
+    
+    
+    
+    
+    public String checkFlag(String PathFlagRemote) throws JSchException, InterruptedException, IOException, ParseException, SftpException, Exception {
+  
+        Vector<ChannelSftp.LsEntry> files = this.Canal.ls(PathFlagRemote);
+
+        String fileName = "";
+
+        for (ChannelSftp.LsEntry entry : files) {
+            if (!entry.getAttrs().isDir()) {
+                fileName = entry.getFilename();
+
+                if (fileName.contains("true")) {
+                    return "tem";
+                }
+            }
+        }
+
+        return "nao tem";
     }
 
 }

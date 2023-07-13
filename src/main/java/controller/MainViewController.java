@@ -86,7 +86,9 @@ public final class MainViewController {
     public void acaoLoadAlteracoes() {
 
         try {
-
+            
+            Remote.obterListaDeFlags(lblDtProd.getText());
+            Remote.gerarFlag(lblDtProd.getText());
             loadLogFTP();
             loadFlagObserver();
 
@@ -120,6 +122,8 @@ public final class MainViewController {
             Remote.obterListaDeFlags(lblDtProd.getText());
 
             Remote.contestarFlag(lblDtProd.getText());
+            
+            loadFlagObserver();
 
         } catch (Exception ex) {
 

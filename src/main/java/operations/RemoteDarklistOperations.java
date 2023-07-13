@@ -240,4 +240,13 @@ public class RemoteDarklistOperations extends RemoteOperations {
 
     }
 
+    @Override
+    public String checkFlag(String Caminho) throws Exception {
+    
+        return Connection.checkFlag(Caminho);
+    
+    }
+
+ 
+
 }

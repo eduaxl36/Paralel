@@ -115,7 +115,7 @@ public class RemoteWhitelistOperations extends RemoteOperations {
             LocalDate DataAbertura = LocalDate.parse(tbMainViewLst.getValueAt(i, 1).toString());
             LocalDate DataFechamento = LocalDate.parse(tbMainViewLst.getValueAt(i, 2).toString());
 
-            if (!(result.equals("null"))) {
+          if ((result.contains("."))) {
 
                 Flags.add(
                         new entidadeFlag(
@@ -241,4 +241,10 @@ public class RemoteWhitelistOperations extends RemoteOperations {
 
     }
 
+    @Override
+    public String checkFlag(String Caminho) throws Exception {
+    
+        return Connection.checkFlag(Caminho);
+    
+    }
 }

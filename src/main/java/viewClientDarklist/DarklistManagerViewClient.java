@@ -15,7 +15,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 
-
 /**
  *
  * @author Eduardo.Fernando
@@ -30,10 +29,8 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
     public DarklistManagerViewClient() throws IOException, Exception {
 
-      
-        
         initComponents();
-        
+
         Controller = new MainViewController();
 
         if (ValidadorAdm == false) {
@@ -308,8 +305,8 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
 
     private void btnUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadActionPerformed
-           Controller.acaoLoadAlteracoes();
-    
+        Controller.acaoLoadAlteracoes();
+
 
     }//GEN-LAST:event_btnUploadActionPerformed
 
@@ -386,11 +383,10 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
     private void RbDarkItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_RbDarkItemStateChanged
 
         try {
-            
+
             Adaptador = new AdapterDark();
-            
+
             Adaptador.iniciaConexao();
-           
 
             // TODO add your handling code here:
         } catch (Exception ex) {
@@ -401,10 +397,10 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
     private void RbwhiteItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_RbwhiteItemStateChanged
 
         try {
-            
+
             Adaptador = new AdapterWhite();
             Adaptador.iniciaConexao();
-    
+
             // TODO add your handling code here:
         } catch (Exception ex) {
             Logger.getLogger(DarklistManagerViewClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -415,16 +411,16 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
 
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
 
-               int resposta = JOptionPane.showConfirmDialog(null, "Deseja exportar o arquivo para lista correspondente?",
+        int resposta = JOptionPane.showConfirmDialog(null, "Deseja exportar o arquivo para lista correspondente?",
                 "Confirmacion",
                 JOptionPane.YES_OPTION);
 
         if (resposta == JOptionPane.YES_OPTION) {
-        
-         Controller.atualizarLista();
-        
+
+            Controller.atualizarLista();
+
         }
-       
+
 
     }//GEN-LAST:event_btnExportActionPerformed
 
@@ -434,9 +430,8 @@ public final class DarklistManagerViewClient extends javax.swing.JFrame {
     public static void main(String args[]) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
 
         try {
-             UIManager.setLookAndFeel(new FlatDarkLaf());
-        
-            
+            UIManager.setLookAndFeel(new FlatDarkLaf());
+
             java.awt.EventQueue.invokeLater(() -> {
                 try {
                     Adaptador = new AdapterDark();

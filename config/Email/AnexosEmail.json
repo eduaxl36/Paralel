@@ -1,0 +1,10 @@
+[
+{
+  "tipo": "Darklist",
+  "caminho": "\\\\kimbrspp565\\\\ProducaoLatam\\\\PA\\\\1.Telepanel\\\\database\\\\definitivo\\\\cf\\\\PaRt\\\\spdark.lst"
+},
+{
+  "tipo": "Whitelist",
+  "caminho": "\\\\kimbrspp565\\\\ProducaoLatam\\\\PA\\\\1.Telepanel\\\\database\\\\definitivo\\\\cf\\\\PaRt\\\\spwhite.lst"
+}
+]
